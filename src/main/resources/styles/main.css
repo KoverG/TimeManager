@@ -332,10 +332,10 @@
     -fx-background-radius: 50%;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-font-size: 16px;
+    -fx-font-size: 24px;
     -fx-alignment: center;
-    -fx-min-width: 24px;
-    -fx-min-height: 24px;
+    -fx-min-width: 28px;
+    -fx-min-height: 28px;
     -fx-padding: 0;
 }
 
@@ -497,24 +497,26 @@
 .jira-checkbox:selected .box {
     -fx-background-color: #2ecc71;
     -fx-border-color: #27ae60;
-    -fx-effect: dropshadow(three-pass-box, rgba(46,204,113,0.9), 2, 0, 0, 0);
 }
 
 /* Галочка */
 .jira-checkbox .mark {
-    -fx-shape: "M0,4 L2,6 L7,0 L8,1 L2,7 L0,5 Z";
-    -fx-scale-shape: false;
-    -fx-translate-x: 1;
-    -fx-translate-y: -1;
-    -fx-fill: white;
+    -fx-shape: "M0,4 L2,6 L7,0 L8,1 L2,7 L0,5 Z"; /* Форма галочки */
+    -fx-scale-shape: true;
+    -fx-translate-x: 0; /* Увеличиваем галочку */
+    -fx-translate-y: 0;
+    -fx-fill: white;  /* Устанавливаем белый цвет для галочки */
     -fx-opacity: 0;
     -fx-transition: opacity 0.2s;
+    -fx-stroke-width: 2px; /* Увеличиваем толщину галочки */
 }
 
 .jira-checkbox:selected .mark {
+    -fx-fill: white !important;
+    -fx-stroke: white !important;
+    -fx-stroke-width: 2px;
     -fx-opacity: 1;
 }
-
 
 
 /* NEW BLOCK: Стили для строк временных слотов */
@@ -624,35 +626,13 @@
 }
 
 /* NEW BLOCK: Стиль для круглых чекбоксов */
-.time-slot-row .check-box {
+.time-slot-row . {
     -fx-padding: 0 5px;
 }
 
-.time-slot-row .check-box .box {
-    -fx-background-color: white;
-    -fx-border-color: #ced4da;
-    -fx-border-radius: 50%;
-    -fx-background-radius: 50%;
-    -fx-pref-width: 20px;
-    -fx-pref-height: 20px;
-}
 
-.time-slot-row .check-box:selected .box {
-    -fx-background-color: #27ae60;
-    -fx-border-color: #27ae60;
-}
 
-.time-slot-row .check-box .mark {
-    -fx-shape: "M0,4 L2,6 L7,0 L8,1 L2,7 L0,5 Z";
-    -fx-scale-shape: false;
-    -fx-translate-x: 1;
-    -fx-translate-y: -1;
-    -fx-fill: white;
-}
 
-.time-slot-row .check-box:focused .box {
-    -fx-border-color: transparent;
-}
 
 .main-banner-day-string {
     -fx-alignment: CENTER;
@@ -677,27 +657,6 @@
     -fx-pref-width: 24px;
     -fx-pref-height: 24px;
     -fx-alignment: center;
-}
-
-.save-success-icon {
-    -fx-background-color: #27ae60;
-    -fx-background-radius: 50%;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 16px;
-    -fx-alignment: center;
-    -fx-min-width: 24px;
-    -fx-min-height: 24px;
-    -fx-padding: 0;
-    -fx-opacity: 0;
-}
-
-.label.success-icon {
-    -fx-text-fill: #28a745;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    /* при желании можно добавить отступ слева */
-    -fx-padding: 0 0 0 5px;
 }
 
 

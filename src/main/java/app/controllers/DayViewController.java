@@ -32,6 +32,7 @@ public class DayViewController {
     @FXML private VBox mainContainer;
     @FXML private Button saveButton;
     @FXML private StackPane saveStatusContainer;
+    @FXML private Label saveSuccessIcon; // Галочка
 
     private LocalDate currentDate;
     private DayData dayData;
@@ -39,6 +40,7 @@ public class DayViewController {
     private int defaultWorkHours;
     private Map<String, TimeEntry> timeEntries;
     private final BooleanProperty isDirty = new SimpleBooleanProperty(false);
+    @FXML private ProgressIndicator saveProgress;
 
     public void setMainContainer(VBox mainContainer) {
         this.mainContainer = mainContainer;
@@ -46,7 +48,7 @@ public class DayViewController {
 
     @FXML
     public void initialize() {
-        saveStatusContainer.setVisible(false);
+        saveSuccessIcon.setVisible(false); // Галочка скрыта изначально
         saveButton.disableProperty().bind(isDirty.not());
         dayTypeCombo.valueProperty().addListener((o, ov, nv) -> markDirty());
         workHoursField.textProperty().addListener((o, ov, nv) -> markDirty());
@@ -229,6 +231,13 @@ public class DayViewController {
 
     @FXML
     private void saveDay() {
+        // Показываем лоадер, скрываем галочку
+        saveProgress.setVisible(true);
+        saveSuccessIcon.setVisible(false);
+
+        saveProgress.setStyle("-fx-progress-color: #FF3C00;");
+
+        // Можно сохранить данные асинхронно (Task/Thread), но если сохранение быстрое — просто так:
         try {
             int wh = Integer.parseInt(workHoursField.getText());
             if (wh < 1 || wh > 24) throw new NumberFormatException();
@@ -238,29 +247,41 @@ public class DayViewController {
             );
             dayData.setTasks(timeEntries);
             allData.put(DateHelper.formatDate(currentDate), dayData);
-            JsonService.saveData(allData);
 
-            // Показываем иконку успешного сохранения на переднем плане
-            saveStatusContainer.toFront();
-            saveStatusContainer.setVisible(true);
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(200), saveStatusContainer);
-            fadeIn.setFromValue(0);
-            fadeIn.setToValue(1);
-            fadeIn.setOnFinished(e -> {
-                PauseTransition pause = new PauseTransition(Duration.seconds(2));
-                pause.setOnFinished(evt -> saveStatusContainer.setVisible(false));
-                pause.play();
+            // имитация небольшой задержки для демонстрации лоадера (можно убрать)
+            PauseTransition fakeLoad = new PauseTransition(Duration.millis(500));
+            fakeLoad.setOnFinished(ev -> {
+                try {
+                    JsonService.saveData(allData);
+
+                    // После успешного сохранения:
+                    saveProgress.setVisible(false);
+                    saveSuccessIcon.setVisible(true);
+
+                    FadeTransition fadeIn = new FadeTransition(Duration.millis(200), saveSuccessIcon);
+                    fadeIn.setFromValue(0);
+                    fadeIn.setToValue(1);
+                    fadeIn.setOnFinished(e -> {
+                        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+                        pause.setOnFinished(evt -> saveSuccessIcon.setVisible(false));
+                        pause.play();
+                    });
+                    fadeIn.play();
+
+                    isDirty.set(false);
+                } catch (IOException e) {
+                    saveProgress.setVisible(false);
+                    UIHelper.showError("Ошибка сохранения: " + e.getMessage());
+                }
             });
-            fadeIn.play();
-
-            isDirty.set(false);
+            fakeLoad.play();
 
         } catch (NumberFormatException e) {
+            saveProgress.setVisible(false);
             UIHelper.showError("Некорректное количество рабочих часов.\nВведите число от 1 до 24.");
-        } catch (IOException e) {
-            UIHelper.showError("Ошибка сохранения: " + e.getMessage());
         }
     }
+
 
     @FXML
     private void clearDay() {

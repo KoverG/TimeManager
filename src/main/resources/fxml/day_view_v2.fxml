@@ -33,9 +33,9 @@
                 text="Сохранить"
                 styleClass="nav-button"
                 disable="true"/>
+        <!-- Галочка/индикатор успешного сохранения -->
         <StackPane fx:id="saveStatusContainer"
-                   style="-fx-pref-width:24px; -fx-pref-height:24px;"
-                   visible="false">
+                   style="-fx-pref-width:24px; -fx-pref-height:24px;">
             <ProgressIndicator fx:id="saveProgress"
                                visible="false"
                                prefWidth="24"
