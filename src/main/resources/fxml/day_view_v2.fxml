@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.controllers.DayViewController"
+      spacing="15"
+      styleClass="main-container"
+      alignment="TOP_CENTER">
+
+    <!-- Заголовок с датой и навигацией -->
+    <HBox alignment="CENTER" spacing="15">
+        <Button onAction="#previousDay" styleClass="day-nav-button" text="◀"/>
+        <Label fx:id="dateLabel" styleClass="header-label"/>
+        <Button onAction="#nextDay" styleClass="day-nav-button" text="▶"/>
+    </HBox>
+
+    <!-- Панель управления типом дня -->
+    <HBox alignment="CENTER" spacing="10" styleClass="action-banner">
+        <Label text="Тип дня:" styleClass="action-banner-text"/>
+        <ComboBox fx:id="dayTypeCombo" style="-fx-pref-width: 150; -fx-background-radius: 12; -fx-border-radius: 12;" prefWidth="150"/>
+        <Label text="Рабочих часов:" styleClass="action-banner-text"/>
+        <TextField fx:id="workHoursField" style="-fx-pref-width: 50; -fx-background-radius: 12; -fx-border-radius: 12;" prefWidth="50"/>
+    </HBox>
+
+    <!-- Кнопки действий -->
+    <HBox alignment="CENTER" spacing="15">
+        <Button fx:id="saveButton" onAction="#saveDay" text="Сохранить" styleClass="nav-button" disable="true"/>
+        <StackPane fx:id="saveStatusContainer" style="-fx-pref-width: 24px; -fx-pref-height: 24px;">
+            <ProgressIndicator fx:id="saveProgress" visible="false" prefWidth="24" prefHeight="24"/>
+            <Label fx:id="saveSuccessIcon" text="✓" styleClass="success-icon" visible="false"/>
+        </StackPane>
+        <Button onAction="#clearDay" text="Очистить" styleClass="nav-button"/>
+        <Button onAction="#backToCalendar" text="Назад к календарю" styleClass="nav-button"/>
+    </HBox>
+
+    <!-- Скроллируемая область для временных слотов -->
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 5;">
+        <VBox fx:id="timeSlotsContainer" spacing="5" style="-fx-alignment: CENTER; -fx-padding: 0 0 5 0;"/>
+    </ScrollPane>
+</VBox>

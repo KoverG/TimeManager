@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="app.controllers.CalendarController"
+      fx:id="mainContainer"
+      spacing="15"
+      styleClass="main-container"
+      alignment="CENTER">
+
+    <!-- Панель управления календарем -->
+    <HBox alignment="CENTER" spacing="15">
+        <Button fx:id="previousButton" onAction="#previousMonth" styleClass="nav-button"/>
+        <Label fx:id="monthYearLabel" styleClass="header-label"/>
+        <Button fx:id="nextButton" onAction="#nextMonth" styleClass="nav-button"/>
+    </HBox>
+
+    <!-- Обертка для выбора месяца и года -->
+    <StackPane>
+        <HBox alignment="CENTER" styleClass="combo-container-wrapper">
+            <HBox alignment="CENTER" spacing="10" styleClass="combo-container">
+                <Label text="Месяц:"/>
+                <ComboBox fx:id="monthCombo" styleClass="custom-combo"/>
+
+                <Label text="Год:" style="-fx-padding: 0 0 0 10;"/>
+                <ComboBox fx:id="yearCombo" styleClass="custom-combo"/>
+
+                <Label fx:id="yearWarningIcon" text="!" styleClass="warning-icon">
+                    <tooltip>
+                        <Tooltip text="Данные за год могут быть неполными.&#10;Производственный календарь будет основан на стандартных выходных."/>
+                    </tooltip>
+                </Label>
+
+                <Button fx:id="updateCalendarButton"
+                        onAction="#updateProductionCalendar"
+                        text="Загрузить календарь"
+                        styleClass="embossed-button"/>
+
+                <!-- Контейнер для статуса загрузки -->
+                <StackPane fx:id="statusContainer" styleClass="status-container">
+                    <ProgressIndicator fx:id="updateProgress"
+                                       visible="false"
+                                       prefWidth="24"
+                                       prefHeight="24"/>
+                    <Label fx:id="successIcon" text="✓" styleClass="success-icon" visible="false"/>
+                </StackPane>
+            </HBox>
+        </HBox>
+    </StackPane>
+
+    <!-- Сетка календаря -->
+    <GridPane fx:id="calendarGrid" styleClass="calendar-grid">
+        <columnConstraints>
+            <ColumnConstraints minWidth="90" prefWidth="90" maxWidth="90"/>
+            <ColumnConstraints minWidth="90" prefWidth="90" maxWidth="90"/>
+            <ColumnConstraints minWidth="90" prefWidth="90" maxWidth="90"/>
+            <ColumnConstraints minWidth="90" prefWidth="90" maxWidth="90"/>
+            <ColumnConstraints minWidth="90" prefWidth="90" maxWidth="90"/>
+            <ColumnConstraints minWidth="90" prefWidth="90" maxWidth="90"/>
+            <ColumnConstraints minWidth="90" prefWidth="90" maxWidth="90"/>
+        </columnConstraints>
+
+        <rowConstraints>
+            <RowConstraints minHeight="40" prefHeight="40" maxHeight="40"/>
+            <RowConstraints minHeight="75" prefHeight="75" maxHeight="75"/>
+            <RowConstraints minHeight="75" prefHeight="75" maxHeight="75"/>
+            <RowConstraints minHeight="75" prefHeight="75" maxHeight="75"/>
+            <RowConstraints minHeight="75" prefHeight="75" maxHeight="75"/>
+            <RowConstraints minHeight="75" prefHeight="75" maxHeight="75"/>
+            <RowConstraints minHeight="75" prefHeight="75" maxHeight="75"/>
+        </rowConstraints>
+
+        <!-- Заголовки дней недели -->
+        <Label text="Пн" styleClass="header-cell" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="Вт" styleClass="header-cell" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        <Label text="Ср" styleClass="header-cell" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        <Label text="Чт" styleClass="header-cell" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+        <Label text="Пт" styleClass="header-cell" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+        <Label text="Сб" styleClass="header-cell" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+        <Label text="Вс" styleClass="header-cell" GridPane.columnIndex="6" GridPane.rowIndex="0"/>
+    </GridPane>
+</VBox>
