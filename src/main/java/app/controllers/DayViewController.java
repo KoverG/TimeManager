@@ -1,4 +1,3 @@
-// src/main/java/app/controllers/DayViewController.java
 package app.controllers;
 
 import app.models.DayData;
@@ -6,13 +5,16 @@ import app.models.TimeEntry;
 import app.services.JsonService;
 import app.utils.DateHelper;
 import app.utils.UIHelper;
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -29,6 +31,10 @@ public class DayViewController {
     @FXML private VBox mainContainer;
     @FXML private Button saveButton;
 
+    @FXML private StackPane saveStatusContainer;
+    @FXML private ProgressIndicator saveProgress;
+    @FXML private Label saveSuccessIcon;
+
     private LocalDate currentDate;
     private DayData dayData;
     private Map<String, DayData> allData;
@@ -38,15 +44,19 @@ public class DayViewController {
     // Флаг «грязи»
     private final BooleanProperty isDirty = new SimpleBooleanProperty(false);
 
-    public void setMainContainer(VBox mainContainer) {
-        this.mainContainer = mainContainer;
-    }
-
     @FXML
     public void initialize() {
+        // кнопка Save активируется при наличии изменений
         saveButton.disableProperty().bind(isDirty.not());
         dayTypeCombo.valueProperty().addListener((o, ov, nv) -> markDirty());
         workHoursField.textProperty().addListener((o, ov, nv) -> markDirty());
+
+        // контейнер состояния по умолчанию скрыт
+        saveStatusContainer.setVisible(false);
+    }
+
+    public void setMainContainer(VBox mainContainer) {
+        this.mainContainer = mainContainer;
     }
 
     public void setDayData(LocalDate date, DayData data, int workHours) {
@@ -64,10 +74,7 @@ public class DayViewController {
             sortedEntries.put(key, e);
             t = t.plusMinutes(30);
         }
-        dayData.getTasks().forEach((time, entry) -> {
-            sortedEntries.putIfAbsent(time, entry);
-        });
-
+        dayData.getTasks().forEach((time, entry) -> sortedEntries.putIfAbsent(time, entry));
         this.timeEntries = sortedEntries;
 
         dateLabel.setText(DateHelper.formatDisplayDate(date));
@@ -75,14 +82,12 @@ public class DayViewController {
         dayTypeCombo.getSelectionModel().select(
                 "workday".equals(dayData.getDayType()) ? 0 : 1
         );
-
         workHoursField.setText(String.valueOf(
                 dayData.getWorkDayHours() > 0 ? dayData.getWorkDayHours() : defaultWorkHours
         ));
 
         timeSlotsContainer.getChildren().clear();
         timeSlotsContainer.setStyle("-fx-alignment: CENTER;");
-
         timeEntries.forEach((timeKey, entry) ->
                 timeSlotsContainer.getChildren().add(createTimeSlotRow(timeKey, entry))
         );
@@ -111,17 +116,17 @@ public class DayViewController {
         ComboBox<Integer> hoursCombo = new ComboBox<>(FXCollections.observableArrayList(0,1,2,3,4,5,6,7,8));
         hoursCombo.getStyleClass().add("combo-container-withoutRadius");
         hoursCombo.setStyle("-fx-background-radius:12 0 0 12; -fx-border-radius:12 0 0 12;");
-        hoursCombo.setPrefSize(65,30);
+        hoursCombo.setPrefSize(65, 30);
 
         ComboBox<Integer> minutesCombo = new ComboBox<>(FXCollections.observableArrayList(0,10,20,30,40,50));
         minutesCombo.getStyleClass().add("combo-container-withoutRadius");
         minutesCombo.setStyle("-fx-background-radius:0 12 12 0; -fx-border-radius:0 12 12 0;");
-        minutesCombo.setPrefSize(65,30);
+        minutesCombo.setPrefSize(65, 30);
 
         TextField commentField = new TextField(entry.getComment());
         commentField.setPromptText("Комментарий");
         commentField.getStyleClass().add("custom-combo-mod");
-        commentField.setPrefSize(370,25);
+        commentField.setPrefSize(370, 25);
 
         CheckBox completedCheck = new CheckBox();
         completedCheck.setSelected(entry.isCompleted());
@@ -129,23 +134,21 @@ public class DayViewController {
 
         row.getChildren().addAll(timeLabel, taskField, hoursCombo, minutesCombo, commentField, completedCheck);
 
-        // Инициализация часов
         try {
             Integer hVal = Integer.valueOf(entry.getHours());
             hoursCombo.getSelectionModel().select(hoursCombo.getItems().contains(hVal) ? hVal : 0);
         } catch (Exception e) {
             hoursCombo.getSelectionModel().select(0);
         }
-        // Инициализация минут
         try {
             Integer mVal = Integer.valueOf(entry.getMinutes());
-            minutesCombo.getSelectionModel().select(minutesCombo.getItems().contains(mVal) ?
-                    minutesCombo.getItems().indexOf(mVal) : 0);
+            minutesCombo.getSelectionModel().select(
+                    minutesCombo.getItems().contains(mVal) ? minutesCombo.getItems().indexOf(mVal) : 0
+            );
         } catch (Exception e) {
             minutesCombo.getSelectionModel().select(0);
         }
 
-        // Слушатели изменений с учётом старых значений
         hoursCombo.valueProperty().addListener((o, ov, nv) -> {
             int oldH = ov != null ? ov : 0;
             int oldM = minutesCombo.getValue() != null ? minutesCombo.getValue() : 0;
@@ -160,17 +163,13 @@ public class DayViewController {
             adjustTimeSlotRow(time, oldH, oldM, oldH, nv != null ? nv : 0);
             markDirty();
         });
-
         taskField.textProperty().addListener((o, ov, nv) -> { entry.setTask(nv); markDirty(); });
         commentField.textProperty().addListener((o, ov, nv) -> { entry.setComment(nv); markDirty(); });
-        completedCheck.selectedProperty().addListener((o, ov, nv) -> { entry.setCompleted(nv); markDirty(); });
+        completedCheck.selectedProperty().addListener((o, ov, nny) -> { entry.setCompleted(nny); markDirty(); });
 
         return row;
     }
 
-    /**
-     * Добавляет или удаляет динамический слот в зависимости от новых и старых часов/минут.
-     */
     private void adjustTimeSlotRow(String baseTime, int oldH, int oldM, int newH, int newM) {
         try {
             LocalTime t0 = LocalTime.parse(baseTime);
@@ -179,34 +178,31 @@ public class DayViewController {
             String oldKey = oldTime.toString();
             String newKey = newTime.toString();
 
-            // Сброс к 0:0 — удаляем предыдущий слот, если это не базовый
             if (newH == 0 && newM == 0) {
                 if (!oldKey.equals(baseTime) && timeEntries.containsKey(oldKey)) {
                     timeEntries.remove(oldKey);
                     timeSlotsContainer.getChildren().removeIf(node -> {
-                        Label lbl = (Label)((HBox)node).getChildren().get(0);
+                        Label lbl = (Label) ((HBox) node).getChildren().get(0);
                         return lbl.getText().equals(oldKey);
                     });
                 }
                 return;
             }
-            // Добавление нового слота
             if (!timeEntries.containsKey(newKey)) {
                 TimeEntry ne = new TimeEntry();
                 timeEntries.put(newKey, ne);
                 int idx = 0;
                 for (int i = 0; i < timeSlotsContainer.getChildren().size(); i++) {
-                    Label lbl = (Label)((HBox)timeSlotsContainer.getChildren().get(i)).getChildren().get(0);
+                    Label lbl = (Label) ((HBox) timeSlotsContainer.getChildren().get(i)).getChildren().get(0);
                     if (LocalTime.parse(lbl.getText()).isBefore(newTime)) idx = i + 1;
                     else break;
                 }
                 timeSlotsContainer.getChildren().add(idx, createTimeSlotRow(newKey, ne));
             }
-            // Удаление старого, если изменился на другой ненулевой
             if ((oldH != 0 || oldM != 0) && timeEntries.containsKey(oldKey) && !oldKey.equals(baseTime)) {
                 timeEntries.remove(oldKey);
                 timeSlotsContainer.getChildren().removeIf(node -> {
-                    Label lbl = (Label)((HBox)node).getChildren().get(0);
+                    Label lbl = (Label) ((HBox) node).getChildren().get(0);
                     return lbl.getText().equals(oldKey);
                 });
             }
@@ -215,8 +211,7 @@ public class DayViewController {
         }
     }
 
-    @FXML
-    private void previousDay() {
+    @FXML private void previousDay() {
         setDayData(
                 currentDate.minusDays(1),
                 allData.get(DateHelper.formatDate(currentDate.minusDays(1))),
@@ -224,8 +219,7 @@ public class DayViewController {
         );
     }
 
-    @FXML
-    private void nextDay() {
+    @FXML private void nextDay() {
         setDayData(
                 currentDate.plusDays(1),
                 allData.get(DateHelper.formatDate(currentDate.plusDays(1))),
@@ -233,32 +227,39 @@ public class DayViewController {
         );
     }
 
-    @FXML
-    private void saveDay() {
+    @FXML private void saveDay() {
         try {
+            saveStatusContainer.setVisible(true);
+            saveProgress.setVisible(true);
+            saveSuccessIcon.setVisible(false);
+
             int wh = Integer.parseInt(workHoursField.getText());
             if (wh < 1 || wh > 24) throw new NumberFormatException();
-
             dayData.setWorkDayHours(wh);
             dayData.setDayType(
-                    dayTypeCombo.getSelectionModel().getSelectedIndex() == 0
-                            ? "workday" : "weekend"
+                    dayTypeCombo.getSelectionModel().getSelectedIndex() == 0 ? "workday" : "weekend"
             );
             dayData.setTasks(timeEntries);
-
             allData.put(DateHelper.formatDate(currentDate), dayData);
             JsonService.saveData(allData);
-            UIHelper.showInfo("Данные сохранены");
+
+            saveProgress.setVisible(false);
+            saveSuccessIcon.setVisible(true);
             isDirty.set(false);
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(evt -> saveStatusContainer.setVisible(false));
+            pause.play();
         } catch (NumberFormatException e) {
-            UIHelper.showError("Некорректное количество рабочих часов. Введите число от 1 до 24.");
+            UIHelper.showError("Некорректное количество рабочих часов.\nВведите число от 1 до 24.");
+            saveStatusContainer.setVisible(false);
         } catch (IOException e) {
             UIHelper.showError("Ошибка сохранения: " + e.getMessage());
+            saveStatusContainer.setVisible(false);
         }
     }
 
-    @FXML
-    private void clearDay() {
+    @FXML private void clearDay() {
         workHoursField.setText(String.valueOf(defaultWorkHours));
         dayTypeCombo.getSelectionModel().select(0);
         timeEntries.clear();
@@ -266,8 +267,7 @@ public class DayViewController {
         markDirty();
     }
 
-    @FXML
-    private void backToCalendar() {
+    @FXML private void backToCalendar() {
         CalendarController ctrl = (CalendarController) mainContainer.getUserData();
         if (ctrl != null) ctrl.showCalendar();
     }

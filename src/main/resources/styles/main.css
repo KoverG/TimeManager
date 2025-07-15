@@ -337,7 +337,6 @@
     -fx-min-width: 24px;
     -fx-min-height: 24px;
     -fx-padding: 0;
-    -fx-opacity: 0;
 }
 
 /* Стили для тултипов */
@@ -691,4 +690,18 @@
     -fx-min-height: 24px;
     -fx-padding: 0;
     -fx-opacity: 0;
+}
+
+.label.success-icon {
+    -fx-text-fill: #28a745;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    /* при желании можно добавить отступ слева */
+    -fx-padding: 0 0 0 5px;
+}
+
+
+/* Если хочется, чтобы контейнер центрировал содержимое */
+.stack-pane#saveStatusContainer {
+    -fx-alignment: center;
 }
