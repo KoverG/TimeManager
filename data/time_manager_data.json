@@ -1,4 +1,553 @@
 {
+  "2025-07-22" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "цукцук",
+        "hours" : "1",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-07-23" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "123123",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "12321",
+        "hours" : "1",
+        "minutes" : "10",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:40" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-07-01" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "123",
+        "hours" : "5",
+        "minutes" : "20",
+        "comment" : "123",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:20" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
   "2025-07-31" : {
     "workDayHours" : 8,
     "dayType" : "workday",
@@ -21,6 +570,546 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-07-21" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "цукцук",
+        "hours" : "1",
+        "minutes" : "20",
+        "comment" : "цук",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:20" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-07-04" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "еке",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "кеке",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-07-16" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "уцк",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "уцккуц",
         "completed" : false,
         "highlighted" : false
       },
@@ -368,6 +1457,195 @@
       }
     }
   },
+  "2025-07-02" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "123",
+        "hours" : "0",
+        "minutes" : "10",
+        "comment" : "123",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:10" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
   "2025-07-25" : {
     "workDayHours" : 8,
     "dayType" : "workday",
@@ -391,6 +1669,384 @@
         "minutes" : "0",
         "comment" : "",
         "completed" : true,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-07-14" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "йцуц",
+        "hours" : "1",
+        "minutes" : "20",
+        "comment" : "йцуцу",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:20" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-07-03" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "123",
+        "hours" : "0",
+        "minutes" : "10",
+        "comment" : "123",
+        "completed" : true,
+        "highlighted" : false
+      },
+      "08:10" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
         "highlighted" : false
       },
       "08:30" : {
@@ -746,6 +2402,186 @@
       }
     }
   },
+  "2025-07-28" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "ывавыа",
+        "hours" : "2",
+        "minutes" : "0",
+        "comment" : "ываыв",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
   "2025-07-29" : {
     "workDayHours" : 8,
     "dayType" : "workday",
@@ -935,7 +2771,7 @@
       }
     }
   },
-  "2025-07-28" : {
+  "2025-07-18" : {
     "workDayHours" : 8,
     "dayType" : "workday",
     "notes1" : null,
@@ -944,11 +2780,11 @@
     "tasks" : {
       "08:00" : {
         "time" : "",
-        "task" : "ывавыа",
-        "hours" : "2",
+        "task" : "йцуцу",
+        "hours" : "0",
         "minutes" : "0",
-        "comment" : "ываыв",
-        "completed" : false,
+        "comment" : "йцуйуц",
+        "completed" : true,
         "highlighted" : false
       },
       "08:30" : {
@@ -970,186 +2806,6 @@
         "highlighted" : false
       },
       "09:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "10:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "10:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "11:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "11:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "12:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "12:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "13:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "13:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "14:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "14:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "15:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "15:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "16:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "16:30" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "17:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      }
-    }
-  },
-  "2025-07-23" : {
-    "workDayHours" : 8,
-    "dayType" : "workday",
-    "notes1" : null,
-    "notes2" : null,
-    "notesTime" : null,
-    "tasks" : {
-      "08:00" : {
-        "time" : "",
-        "task" : "123123",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "08:30" : {
-        "time" : "",
-        "task" : "12321",
-        "hours" : "1",
-        "minutes" : "10",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "09:00" : {
-        "time" : "",
-        "task" : "",
-        "hours" : "0",
-        "minutes" : "0",
-        "comment" : "",
-        "completed" : false,
-        "highlighted" : false
-      },
-      "09:40" : {
         "time" : "",
         "task" : "",
         "hours" : "0",
