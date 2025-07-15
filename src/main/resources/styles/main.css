@@ -664,3 +664,13 @@
 .stack-pane#saveStatusContainer {
     -fx-alignment: center;
 }
+
+.adjusted-time-slot-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2f4f4f; /* Цвет текста, можно изменить */
+    -fx-alignment: center;
+    -fx-padding: 5px;
+    -fx-min-width: 60px; /* Устанавливаем минимальную ширину */
+    -fx-max-width: 70px; /* Максимальная ширина */
+}

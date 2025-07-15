@@ -559,12 +559,12 @@
         "time" : "",
         "task" : "123",
         "hours" : "5",
-        "minutes" : "20",
+        "minutes" : "10",
         "comment" : "123",
         "completed" : true,
         "highlighted" : false
       },
-      "08:30" : {
+      "08:10" : {
         "time" : "",
         "task" : "",
         "hours" : "0",
@@ -655,6 +655,195 @@
         "highlighted" : false
       },
       "13:20" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "14:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "15:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "16:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "17:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      }
+    }
+  },
+  "2025-06-30" : {
+    "workDayHours" : 8,
+    "dayType" : "workday",
+    "notes1" : null,
+    "notes2" : null,
+    "notesTime" : null,
+    "tasks" : {
+      "08:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "10",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "08:10" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "08:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "09:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "10:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "11:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:00" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "12:30" : {
+        "time" : "",
+        "task" : "",
+        "hours" : "0",
+        "minutes" : "0",
+        "comment" : "",
+        "completed" : false,
+        "highlighted" : false
+      },
+      "13:00" : {
         "time" : "",
         "task" : "",
         "hours" : "0",
@@ -3162,7 +3351,7 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : false,
+        "completed" : true,
         "highlighted" : false
       },
       "08:30" : {
@@ -3887,20 +4076,20 @@
     "tasks" : {
       "08:00" : {
         "time" : "",
-        "task" : "йцуцу",
+        "task" : "",
         "hours" : "0",
         "minutes" : "0",
-        "comment" : "йцуйуц",
-        "completed" : true,
+        "comment" : "",
+        "completed" : false,
         "highlighted" : false
       },
       "08:30" : {
         "time" : "",
-        "task" : "ку",
+        "task" : "",
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : true,
+        "completed" : false,
         "highlighted" : false
       },
       "09:00" : {
@@ -3908,8 +4097,8 @@
         "task" : "",
         "hours" : "0",
         "minutes" : "0",
-        "comment" : "ыва",
-        "completed" : true,
+        "comment" : "",
+        "completed" : false,
         "highlighted" : false
       },
       "09:30" : {
@@ -3918,7 +4107,7 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : true,
+        "completed" : false,
         "highlighted" : false
       },
       "10:00" : {
@@ -3927,7 +4116,7 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : true,
+        "completed" : false,
         "highlighted" : false
       },
       "10:30" : {
@@ -3936,7 +4125,7 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : true,
+        "completed" : false,
         "highlighted" : false
       },
       "11:00" : {
@@ -3945,7 +4134,7 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : true,
+        "completed" : false,
         "highlighted" : false
       },
       "11:30" : {
@@ -3954,7 +4143,7 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : true,
+        "completed" : false,
         "highlighted" : false
       },
       "12:00" : {
@@ -3963,7 +4152,7 @@
         "hours" : "0",
         "minutes" : "0",
         "comment" : "",
-        "completed" : true,
+        "completed" : false,
         "highlighted" : false
       },
       "12:30" : {
