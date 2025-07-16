@@ -1,4 +1,3 @@
-// src/main/java/app/controllers/CalendarController.java
 package app.controllers;
 
 import app.models.DayData;
@@ -21,22 +20,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.net.URL;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicReference; // NEW IMPORT
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CalendarController {
     @FXML private Label monthYearLabel;
@@ -61,10 +54,10 @@ public class CalendarController {
     @FXML
     public void initialize() {
         try {
-            dataRef.set(JsonService.loadData()); // MODIFIED
+            dataRef.set(JsonService.loadData()); // Ожидаем, что loadData() загрузит корректные данные
         } catch (IOException e) {
             UIHelper.showError("Ошибка загрузки данных: " + e.getMessage());
-            dataRef.set(new HashMap<>()); // MODIFIED
+            dataRef.set(new HashMap<>()); // Если ошибка загрузки, инициализируем пустую карту
         }
 
         monthCombo.getItems().addAll(
@@ -320,13 +313,8 @@ public class CalendarController {
     }
 
     private void addCalendarCell(LocalDate date, int currentMonth, int row, int col) {
-        // MODIFIED: Гарантированная инициализация
+        // Гарантированная инициализация данных
         Map<String, DayData> data = dataRef.get();
-        if (data == null) {
-            data = new HashMap<>();
-            dataRef.set(data);
-        }
-
         String dateStr = DateHelper.formatDate(date);
         DayData dayData = data.get(dateStr);
 
@@ -357,13 +345,7 @@ public class CalendarController {
     }
 
     public void showCalendar() {
-        try {
-            dataRef.set(JsonService.loadData()); // MODIFIED
-        } catch (IOException e) {
-            UIHelper.showError("Ошибка загрузки календаря: " + e.getMessage());
-            dataRef.set(new HashMap<>()); // MODIFIED
-        }
-        updateCalendar();
+        updateCalendar();  // Перерисовываем календарь
 
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/calendar.fxml"));

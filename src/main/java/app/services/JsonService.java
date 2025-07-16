@@ -28,11 +28,28 @@ public class JsonService {
      */
     public static synchronized Map<String, DayData> loadData() throws IOException {
         Path path = Paths.get(DATA_FILE);
+
+        // Проверка, если файл не существует, возвращаем пустую карту
         if (!Files.exists(path)) {
             System.out.println("Файл данных не существует, создается новый: " + path.toAbsolutePath());
             return new HashMap<>();
         }
-        return MAPPER.readValue(path.toFile(), TYPE_REF);
+
+        // Если файл существует, проверяем его размер
+        if (Files.size(path) == 0) {
+            System.out.println("Файл данных пустой, создается новый: " + path.toAbsolutePath());
+            return new HashMap<>();  // Возвращаем пустую карту, если файл пустой
+        }
+
+        // Попытка десериализации данных из JSON
+        try {
+            Map<String, DayData> data = MAPPER.readValue(path.toFile(), TYPE_REF);
+            System.out.println("Загружены данные: " + data);  // Для логирования
+            return data;
+        } catch (IOException e) {
+            System.out.println("Ошибка при чтении/десериализации файла: " + path.toAbsolutePath());
+            throw new IOException("Ошибка чтения или десериализации JSON файла: " + e.getMessage());
+        }
     }
 
     /**
