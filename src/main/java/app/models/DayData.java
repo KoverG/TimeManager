@@ -1,11 +1,13 @@
 package app.models;
 
+
 import java.util.HashMap;
 import java.util.Map;
+import app.controllers.DayType;  // Импортируем DayType из контроллера
 
 public class DayData {
     private int workDayHours = 8;
-    private String dayType = "workday";
+    private DayType dayType = DayType.WORKDAY;  // Используем DayType из app.controllers
     private Map<String, TimeEntry> tasks = new HashMap<>();
 
     // Переопределяем метод toString()
@@ -29,8 +31,8 @@ public class DayData {
     // Геттеры и сеттеры
     public int getWorkDayHours() { return workDayHours; }
     public void setWorkDayHours(int workDayHours) { this.workDayHours = workDayHours; }
-    public String getDayType() { return dayType; }
-    public void setDayType(String dayType) { this.dayType = dayType; }
+    public DayType getDayType() { return dayType; }  // Теперь возвращаем DayType
+    public void setDayType(DayType dayType) { this.dayType = dayType; }  // Теперь принимаем DayType
     public Map<String, TimeEntry> getTasks() { return tasks; }
     public void setTasks(Map<String, TimeEntry> tasks) { this.tasks = tasks; }
 }

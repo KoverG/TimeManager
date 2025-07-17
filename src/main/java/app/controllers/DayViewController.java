@@ -3,6 +3,7 @@ package app.controllers;
 import app.models.DayData;
 import app.models.TimeEntry;
 import app.services.JsonService;
+import app.services.ProductionCalendarService;
 import app.utils.DateHelper;
 import app.utils.UIHelper;
 import javafx.animation.PauseTransition;
@@ -17,6 +18,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import java.util.List;
 import java.util.ArrayList;
+import app.controllers.DayType;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -50,20 +52,6 @@ public class DayViewController {
     private Map<String, TimeEntry> timeEntries;
     private final BooleanProperty isDirty = new SimpleBooleanProperty(false);
 
-    private enum DayType {
-        WORKDAY("workday"), WEEKEND("weekend");
-
-        private final String type;
-
-        DayType(String type) {
-            this.type = type;
-        }
-
-        public String getType() {
-            return type;
-        }
-    }
-
     public void setMainContainer(VBox mainContainer) {
         this.mainContainer = mainContainer;
     }
@@ -80,12 +68,17 @@ public class DayViewController {
         isDirty.set(true);
     }
 
-    public void setDayData(LocalDate date, DayData data, int workHours) {
+    public void setDayData(LocalDate date, DayData data, int workHours, DayType defaultDayType) {
         this.currentDate = date;
-        this.dayData = (data != null) ? data : new DayData();
+        this.dayData = (data != null) ? data : new DayData();  // Если данных нет, создаем новый объект
         this.defaultWorkHours = workHours;
 
-        loadDayDataFromJson();  // Загрузка данных из JSON
+        loadDayDataFromJson();  // Загружаем данные из JSON
+
+        // Если данные по дате пусты, задаем тип дня по умолчанию, полученный из календаря
+        if (this.dayData == null || this.dayData.getDayType() == null) {
+            this.dayData.setDayType(defaultDayType);  // Используем тип дня из календаря
+        }
 
         timeEntries = createSortedTimeEntries(); // Создание стандартных временных слотов
         updateUIWithData(); // Обновление UI после загрузки данных
@@ -97,9 +90,15 @@ public class DayViewController {
             if (allData.isEmpty()) {  // Проверяем, не пустой ли объект allData
                 allData = new HashMap<>();  // Если данные пустые, инициализируем пустой HashMap
             }
+
+            // Логируем полученные данные
+            for (Map.Entry<String, DayData> entry : allData.entrySet()) {
+                System.out.println("Loaded DayData: " + entry.getKey() + " -> " + entry.getValue().getDayType());
+            }
+
         } catch (IOException e) {
-            UIHelper.showError("9Ошибка загрузки данных: " + e.getMessage());  // Обрабатываем ошибку загрузки
-            this.allData = new HashMap<>();  // В случае ошибки, инициализируем пустой HashMap
+            UIHelper.showError("Ошибка загрузки данных: " + e.getMessage());
+            this.allData = new HashMap<>();
         }
     }
 
@@ -138,8 +137,27 @@ public class DayViewController {
 
     private void updateUIWithData() {
         dateLabel.setText(DateHelper.formatDisplayDate(currentDate));
-        dayTypeCombo.setItems(FXCollections.observableArrayList(DayType.WORKDAY.getType(), DayType.WEEKEND.getType()));
-        dayTypeCombo.getSelectionModel().select(DayType.WORKDAY.getType().equals(dayData.getDayType()) ? 0 : 1);
+
+        // Получаем тип дня
+        DayType dayTypeEnum = dayData.getDayType();  // Это теперь DayType, а не строка
+        System.out.println("Loaded DayType for the day: " + dayTypeEnum);
+
+        // Обновляем комбобокс с типами дней, используя DayType
+        dayTypeCombo.setItems(FXCollections.observableArrayList(
+                DayType.WORKDAY.getType(),  // Рабочий день
+                DayType.WEEKEND.getType()   // Выходной день
+        ));
+
+        // Устанавливаем правильное значение комбобокса в зависимости от типа дня
+        if (DayType.WORKDAY.equals(dayTypeEnum)) {
+            dayTypeCombo.getSelectionModel().select(DayType.WORKDAY.getType());  // Рабочий день
+        } else if (DayType.WEEKEND.equals(dayTypeEnum)) {
+            dayTypeCombo.getSelectionModel().select(DayType.WEEKEND.getType());  // Выходной день
+        } else {
+            // Если тип дня не совпадает, ставим выходной по умолчанию
+            dayTypeCombo.getSelectionModel().select(DayType.WEEKEND.getType());  // Выходной день
+        }
+
         workHoursField.setText(String.valueOf(dayData.getWorkDayHours() > 0 ? dayData.getWorkDayHours() : defaultWorkHours));
 
         timeSlotsContainer.getChildren().clear();
@@ -150,6 +168,10 @@ public class DayViewController {
 
         isDirty.set(false);
     }
+
+
+
+
 
     private HBox createTimeSlotRow(String time, TimeEntry entry) {
         HBox row = new HBox(5);
@@ -235,21 +257,38 @@ public class DayViewController {
         return row;
     }
 
+    private DayType getDayTypeForDate(LocalDate date) {
+        if (ProductionCalendarService.isHoliday(date)) {
+            return DayType.WEEKEND;  // Праздник — выходной день
+        }
+        if (ProductionCalendarService.isShortDay(date)) {
+            return DayType.WORKDAY;  // Сокращённый день — рабочий
+        }
+        if (date.getDayOfWeek() == java.time.DayOfWeek.SATURDAY || date.getDayOfWeek() == java.time.DayOfWeek.SUNDAY) {
+            return DayType.WEEKEND;  // Суббота и воскресенье — выходной
+        }
+        return DayType.WORKDAY;  // По умолчанию рабочий день
+    }
+
     @FXML
     private void previousDay() {
+        DayType dayType = getDayTypeForDate(currentDate.minusDays(1)); //Получаем тип дня для предыдущего дня
         setDayData(
                 currentDate.minusDays(1),
                 allData.get(DateHelper.formatDate(currentDate.minusDays(1))),
-                defaultWorkHours
+                defaultWorkHours,
+                dayType  // Передаем тип дня
         );
     }
 
     @FXML
     private void nextDay() {
+        DayType dayType = getDayTypeForDate(currentDate.minusDays(1));  // Получаем тип дня для следующего дня
         setDayData(
                 currentDate.plusDays(1),
                 allData.get(DateHelper.formatDate(currentDate.plusDays(1))),
-                defaultWorkHours
+                defaultWorkHours,
+                dayType  // Передаем тип дня
         );
     }
 
@@ -267,8 +306,25 @@ public class DayViewController {
 
             // Устанавливаем данные
             dayData.setWorkDayHours(wh);
-            dayData.setDayType(dayTypeCombo.getSelectionModel().getSelectedIndex() == 0 ? DayType.WORKDAY.getType() : DayType.WEEKEND.getType());
+
+            // Получаем выбранный тип дня из комбобокса и безопасно преобразуем его в DayType
+            String selectedDayTypeString = dayTypeCombo.getSelectionModel().getSelectedItem();
+            System.out.println("Selected DayType from ComboBox before save: " + selectedDayTypeString);  // Логируем выбранный тип дня из комбобокса
+
+            DayType selectedDayType = getDayTypeFromString(selectedDayTypeString);
+            System.out.println("Converted DayType: " + selectedDayType);  // Логируем, какой DayType был преобразован
+
+            // Логируем значение типа дня перед сохранением
+            System.out.println("Setting DayType in DayData: " + selectedDayType);
+            dayData.setDayType(selectedDayType);  // Устанавливаем DayType
+
+            // Логируем день после установки типа
+            System.out.println("DayType after setting in dayData: " + dayData.getDayType());
+
+            // Устанавливаем задачи
             dayData.setTasks(timeEntries);
+
+            // Обновляем данные в allData
             allData.put(DateHelper.formatDate(currentDate), dayData);
 
             // Имитация задержки для демонстрации индикатора загрузки
@@ -282,12 +338,17 @@ public class DayViewController {
                         return;
                     }
 
+                    // Логируем данные перед сохранением
+                    for (Map.Entry<String, DayData> entry : allData.entrySet()) {
+                        System.out.println("DayData before save: " + entry.getKey() + " -> " + entry.getValue().getDayType());
+                    }
+
                     // Сохраняем данные
                     JsonService.saveData(allData);
                     handleSaveSuccess(); // Обрабатываем успешное сохранение
                 } catch (IOException e) {
                     saveProgress.setVisible(false);
-                    UIHelper.showError("Error1 load data: " + e.getMessage());
+                    UIHelper.showError("Ошибка при сохранении данных: " + e.getMessage());
                 }
             });
             fakeLoad.play();
@@ -297,6 +358,19 @@ public class DayViewController {
             UIHelper.showError("Некорректное количество рабочих часов.\nВведите число от 1 до 24.");
         }
     }
+
+
+
+    // Метод для безопасного преобразования строки в DayType
+    private DayType getDayTypeFromString(String dayTypeString) {
+        if (dayTypeString == null) {
+            return DayType.WORKDAY;  // По умолчанию рабочий день
+        }
+
+        // Убираем возможные пробелы и приводим к нужному регистру
+        return DayType.fromString(dayTypeString.trim());
+    }
+
 
 
     private void handleSaveSuccess() {
@@ -323,9 +397,12 @@ public class DayViewController {
     @FXML
     private void clearDay() {
         workHoursField.setText(String.valueOf(defaultWorkHours));
-        dayTypeCombo.getSelectionModel().select(0);
+        dayTypeCombo.getSelectionModel().select(0);  // Выбираем первый элемент в ComboBox
         timeEntries.clear();
-        setDayData(currentDate, new DayData(), defaultWorkHours);
+
+        // Передаем тип дня по умолчанию (например, DayType.WORKDAY)
+        setDayData(currentDate, new DayData(), defaultWorkHours, DayType.WORKDAY);
+
         markDirty();
     }
 

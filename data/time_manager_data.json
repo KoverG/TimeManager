@@ -1,14 +1,14 @@
 {
-  "2025-07-07" : {
+  "2025-07-18" : {
     "workDayHours" : 8,
-    "dayType" : "workday",
+    "dayType" : "WORKDAY",
     "tasks" : {
       "08:00" : {
-        "task" : "уцу",
-        "hours" : "1",
+        "task" : "",
+        "hours" : "2",
         "minutes" : "30",
-        "comment" : "цу",
-        "completed" : true
+        "comment" : "",
+        "completed" : false
       },
       "08:10" : {
         "task" : "",

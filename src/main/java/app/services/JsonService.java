@@ -1,5 +1,6 @@
 package app.services;
 
+
 import app.models.DayData;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class JsonService {
     private static final String DATA_FILE = "data/time_manager_data.json";
@@ -44,6 +46,9 @@ public class JsonService {
         // Попытка десериализации данных из JSON
         try {
             Map<String, DayData> data = MAPPER.readValue(path.toFile(), TYPE_REF);
+
+            // Заполнение дефолтными значениями для отсутствующих дней
+            data.entrySet().removeIf(entry -> entry.getValue() == null);  // Убираем любые null значения
             System.out.println("Загружены данные: " + data);  // Для логирования
             return data;
         } catch (IOException e) {
@@ -51,6 +56,7 @@ public class JsonService {
             throw new IOException("Ошибка чтения или десериализации JSON файла: " + e.getMessage());
         }
     }
+
 
     /**
      * Сохраняет данные в JSON-файл атомарно: в tmp-файл с последующей заменой.

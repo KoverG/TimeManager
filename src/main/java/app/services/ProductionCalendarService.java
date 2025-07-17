@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProductionCalendarService {
     private static final String CALENDAR_DATA_DIR = "data/calendar/";
@@ -53,6 +55,27 @@ public class ProductionCalendarService {
 
     public static boolean isCalendarLoaded(int year) {
         return HOLIDAYS_CACHE.containsKey(year);
+    }
+
+    public static List<String> loadHolidays(String year) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String filePath = "calendar_" + year + ".json"; // Путь к файлу
+            File calendarFile = new File(filePath);
+
+            if (!calendarFile.exists()) {
+                // Если файл не существует, возвращаем пустой список
+                return List.of();
+            }
+
+            // Загружаем данные из файла
+            Map<String, Object> calendarData = objectMapper.readValue(calendarFile, Map.class);
+            return (List<String>) calendarData.get("holidays");
+        } catch (IOException e) {
+            // Если ошибка при загрузке, выводим ошибку и возвращаем пустой список
+            System.err.println("Ошибка загрузки праздников для года " + year + ": " + e.getMessage());
+            return List.of(); // Возвращаем пустой список праздников
+        }
     }
 
     private static void loadFromLocalFile(int year, Path path) throws IOException {

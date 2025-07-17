@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -108,15 +109,18 @@ public class CalendarController {
         updateWarningAndButtonVisibility();
     }
 
-    private void showDayView(LocalDate date) {
+    private void showDayView(LocalDate date, DayData dayData) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/day_view_v2.fxml")); // MODIFIED
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/day_view_v2.fxml"));
             VBox dayView = loader.load();
             DayViewController controller = loader.getController();
 
-            // MODIFIED: Безопасный доступ к данным
-            DayData dayData = dataRef.get().getOrDefault(DateHelper.formatDate(date), new DayData());
-            controller.setDayData(date, dayData, workDayHours);
+            // Передаем тип дня, извлеченный из dayData
+            DayType dayType = dayData.getDayType();  // Получаем тип дня из dayData
+            System.out.println("Passing DayData to DayViewController: " + dayData.getDayType());
+
+            // Устанавливаем данные для дня, передаем тип дня
+            controller.setDayData(date, dayData, workDayHours, dayType);  // Передаем 4 аргумента
 
             controller.setMainContainer(mainContainer);
             mainContainer.setUserData(this);
@@ -127,6 +131,7 @@ public class CalendarController {
             UIHelper.showError("Ошибка загрузки экрана дня: " + e.getMessage());
         }
     }
+
 
     private void updateWarningAndButtonVisibility() {
         Integer selectedYear = yearCombo.getValue();
@@ -313,36 +318,80 @@ public class CalendarController {
     }
 
     private void addCalendarCell(LocalDate date, int currentMonth, int row, int col) {
-        // Гарантированная инициализация данных
+        // Получаем данные о днях
         Map<String, DayData> data = dataRef.get();
-        String dateStr = DateHelper.formatDate(date);
-        DayData dayData = data.get(dateStr);
-
-        String dayType = "workday";
-        if (dayData != null) {
-            dayType = dayData.getDayType();
-        } else {
-            if (ProductionCalendarService.isHoliday(date)) {
-                dayType = "holiday";
-            } else if (ProductionCalendarService.isWeekend(date)) {
-                dayType = "weekend";
-            } else if (ProductionCalendarService.isShortDay(date)) {
-                dayType = "short";
-            }
+        if (data == null) {
+            // Если данных нет, создаем пустую карту
+            data = new HashMap<>();
+            dataRef.set(data);  // Обновляем ссылку в AtomicReference
         }
 
-        double progress = dayData != null ? dayData.getProgress(workDayHours) : 0;
+        String dateStr = DateHelper.formatDate(date);
+        AtomicReference<DayData> dayDataRef = new AtomicReference<>(data.get(dateStr));
 
+        // Проверяем, если dayDataRef.get() равно null, создаем новый объект
+        DayData dayData = dayDataRef.get();
+        if (dayData == null) {
+            dayData = new DayData();  // Если данных нет, создаем новый объект DayData
+            dayDataRef.set(dayData);  // Обновляем ссылку в AtomicReference
+        }
+
+        // Логируем дату и текущие данные
+        System.out.println("Checking day for: " + date + " (" + dateStr + ")");
+
+        // Проверяем, является ли день праздником или выходным
+        String dayTypeString = "workday"; // По умолчанию рабочий день
+        try {
+            // Загружаем список праздников для текущего года
+            List<String> holidays = ProductionCalendarService.loadHolidays(String.valueOf(date.getYear()));
+            System.out.println("Holidays for " + date.getYear() + ": " + holidays);
+
+            // Если день есть в списке праздников, считаем его выходным
+            if (holidays.contains(dateStr)) {
+                dayTypeString = "weekend";
+                System.out.println(date + " is a holiday, setting as weekend.");
+            } else if (ProductionCalendarService.isWeekend(date)) {
+                dayTypeString = "weekend"; // Выходной день по умолчанию
+                System.out.println(date + " is a weekend, setting as weekend.");
+            } else if (ProductionCalendarService.isShortDay(date)) {
+                dayTypeString = "short"; // Сокращенный день
+                System.out.println(date + " is a short day, setting as short.");
+            }
+        } catch (Exception e) {
+            // В случае ошибки, также считаем выходные по умолчанию
+            System.err.println("Ошибка обработки дня: " + date + " " + e.getMessage());
+        }
+
+        // Преобразуем строку типа дня в объект DayType
+        DayType dayType = DayType.fromString(dayTypeString);
+        System.out.println("Determined DayType: " + dayType);
+
+        // Устанавливаем правильный тип дня в DayData
+        dayData.setDayType(dayType);
+
+        double progress = dayData.getProgress(workDayHours);
+
+        // Создаем ячейку календаря с типом дня
         RoundedCalendarCell cell = new RoundedCalendarCell(
                 date,
                 currentMonth,
                 progress,
-                dayType
+                dayTypeString // Мы по-прежнему используем строку для отображения типа дня
         );
 
-        cell.setOnMouseClicked(e -> showDayView(date));
+        // Обработчик нажатия на ячейку
+        // Используем dayDataRef.get() в лямбда-выражении
+        cell.setOnMouseClicked(e -> showDayView(date, dayDataRef.get()));  // Передаем dayData в showDayView
         calendarGrid.add(cell, col, row);
     }
+
+
+
+
+
+
+
+
 
     public void showCalendar() {
         updateCalendar();  // Перерисовываем календарь
