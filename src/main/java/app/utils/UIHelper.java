@@ -52,9 +52,10 @@ public class UIHelper {
     }
 
     public static String getDayTypeColor(String dayType) {
+        System.out.println("Day type received: " + dayType);
         switch (dayType) {
             case "holiday": return "#ffcdd2"; // Праздничный (красный)
-            case "weekend": return "#d0d0d0"; // Выходной (приглушенный серый)
+            case "WEEKEND": return "#d0d0d0"; // Выходной (приглушенный серый)
             case "short":   return "#fff8e1"; // Сокращенный
             default:        return "#e0e0e0"; // Рабочий (темнее основного фона)
         }

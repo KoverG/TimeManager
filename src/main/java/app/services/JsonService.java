@@ -1,6 +1,5 @@
 package app.services;
 
-
 import app.models.DayData;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,7 +12,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class JsonService {
     private static final String DATA_FILE = "data/time_manager_data.json";
@@ -31,25 +29,36 @@ public class JsonService {
     public static synchronized Map<String, DayData> loadData() throws IOException {
         Path path = Paths.get(DATA_FILE);
 
-        // Проверка, если файл не существует, возвращаем пустую карту
+        // Проверка существования файла
         if (!Files.exists(path)) {
             System.out.println("Файл данных не существует, создается новый: " + path.toAbsolutePath());
-            return new HashMap<>();
+            return new HashMap<>();  // Возвращаем пустую карту, если файл не существует
         }
 
-        // Если файл существует, проверяем его размер
+        // Проверка, если файл пустой
         if (Files.size(path) == 0) {
             System.out.println("Файл данных пустой, создается новый: " + path.toAbsolutePath());
             return new HashMap<>();  // Возвращаем пустую карту, если файл пустой
         }
 
+        // Логируем путь к файлу перед загрузкой
+        System.out.println("Attempting to load data from: " + path.toAbsolutePath());
+
         // Попытка десериализации данных из JSON
         try {
             Map<String, DayData> data = MAPPER.readValue(path.toFile(), TYPE_REF);
 
-            // Заполнение дефолтными значениями для отсутствующих дней
-            data.entrySet().removeIf(entry -> entry.getValue() == null);  // Убираем любые null значения
-            System.out.println("Загружены данные: " + data);  // Для логирования
+            // Логируем результат десериализации
+            if (data == null || data.isEmpty()) {
+                System.out.println("The deserialized data is empty.");
+            } else {
+                System.out.println("Deserialized data: " + data);  // Логируем загруженные данные
+            }
+
+            // Убираем null значения
+            data.entrySet().removeIf(entry -> entry.getValue() == null);
+            System.out.println("Final data after removing null values: " + data);
+
             return data;
         } catch (IOException e) {
             System.out.println("Ошибка при чтении/десериализации файла: " + path.toAbsolutePath());

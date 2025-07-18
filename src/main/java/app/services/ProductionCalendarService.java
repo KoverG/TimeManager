@@ -53,39 +53,82 @@ public class ProductionCalendarService {
         }
     }
 
-    public static boolean isCalendarLoaded(int year) {
-        return HOLIDAYS_CACHE.containsKey(year);
+    public static List<String> loadShortDays(String year) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String filePath = "data/calendar/calendar_" + year + ".json"; // Ensure the path is correct
+            File calendarFile = new File(filePath);
+
+            if (!calendarFile.exists()) {
+                System.out.println("File not found for year " + year + " (" + filePath + "), returning empty list for short days.");
+                return List.of();
+            }
+
+            // Load data from the file
+            Map<String, Object> calendarData = objectMapper.readValue(calendarFile, Map.class);
+
+            // Log the loading process
+            System.out.println("Successfully loaded short days data from file " + filePath);
+            if (calendarData.containsKey("shortDays")) {
+                System.out.println("Loaded short days from file " + filePath + ": " + calendarData.get("shortDays"));
+            } else {
+                System.out.println("No short days found in " + filePath);
+            }
+
+            return (List<String>) calendarData.get("shortDays");
+        } catch (IOException e) {
+            // Log error and return an empty list if an error occurs
+            System.err.println("Error loading short days for year " + year + ": " + e.getMessage());
+            return List.of(); // Return an empty list of short days
+        }
     }
 
     public static List<String> loadHolidays(String year) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            String filePath = "calendar_" + year + ".json"; // Путь к файлу
+            String filePath = "data/calendar/calendar_" + year + ".json"; // Ensure the path is correct
             File calendarFile = new File(filePath);
 
             if (!calendarFile.exists()) {
-                // Если файл не существует, возвращаем пустой список
+                System.out.println("File not found for year " + year + " (" + filePath + "), returning empty list for holidays.");
                 return List.of();
             }
 
-            // Загружаем данные из файла
+            // Load data from the file
             Map<String, Object> calendarData = objectMapper.readValue(calendarFile, Map.class);
+
+            // Log the loading process
+            System.out.println("Successfully loaded holidays data from file " + filePath);
+            if (calendarData.containsKey("holidays")) {
+                System.out.println("Loaded holidays from file " + filePath + ": " + calendarData.get("holidays"));
+            } else {
+                System.out.println("No holidays found in " + filePath);
+            }
+
             return (List<String>) calendarData.get("holidays");
         } catch (IOException e) {
-            // Если ошибка при загрузке, выводим ошибку и возвращаем пустой список
-            System.err.println("Ошибка загрузки праздников для года " + year + ": " + e.getMessage());
-            return List.of(); // Возвращаем пустой список праздников
+            // Log error and return an empty list if an error occurs
+            System.err.println("Error loading holidays for year " + year + ": " + e.getMessage());
+            return List.of(); // Return an empty list of holidays
         }
     }
 
     private static void loadFromLocalFile(int year, Path path) throws IOException {
+        // Log the file path
+        System.out.println("Loading data from local file: " + path.toAbsolutePath());
+
         JsonNode root = mapper.readTree(path.toFile());
         Set<LocalDate> holidays = parseDates(root.path("holidays"));
         Set<LocalDate> shortDays = parseDates(root.path("shortDays"));
 
+        // Log the number of found data
+        System.out.println("Loaded " + holidays.size() + " holidays and " + shortDays.size() + " short days for year " + year);
+
         if (!holidays.isEmpty() || !shortDays.isEmpty()) {
             HOLIDAYS_CACHE.put(year, holidays);
             SHORT_DAYS_CACHE.put(year, shortDays);
+        } else {
+            System.out.println("No data found for holidays or short days in file " + path);
         }
     }
 
@@ -99,8 +142,16 @@ public class ProductionCalendarService {
         return dates;
     }
 
+    public static boolean isCalendarLoaded(int year) {
+        return HOLIDAYS_CACHE.containsKey(year);
+    }
+
+    public static boolean isShortDaysLoaded(int year) {
+        return SHORT_DAYS_CACHE.containsKey(year);
+    }
+
     public static void loadCalendarForYear(int year) throws IOException, InterruptedException {
-        if (isCalendarLoaded(year)) return;
+        if (isCalendarLoaded(year) && isShortDaysLoaded(year)) return;
 
         Path localPath = Paths.get(CALENDAR_DATA_DIR + "calendar_" + year + ".json");
         boolean fileExists = Files.exists(localPath);
@@ -118,9 +169,10 @@ public class ProductionCalendarService {
         downloadCalendarData(year);
     }
 
+
     private static void downloadCalendarData(int year) throws IOException, InterruptedException {
         String url = String.format(BASE_URL, year);
-        System.out.println("Загрузка данных с: " + url);
+        System.out.println("Downloading data from: " + url);
 
         HttpClient client = HttpClient.newBuilder()
                 .connectTimeout(java.time.Duration.ofSeconds(15))
@@ -134,31 +186,31 @@ public class ProductionCalendarService {
 
         try {
             HttpResponse<byte[]> response = client.send(request, HttpResponse.BodyHandlers.ofByteArray());
-            System.out.println("Статус ответа: " + response.statusCode());
+            System.out.println("Response status: " + response.statusCode());
 
             if (response.statusCode() == 200) {
                 String responseBody = new String(response.body(), StandardCharsets.UTF_8);
-                System.out.println("Размер ответа: " + responseBody.length() + " символов");
+                System.out.println("Response size: " + responseBody.length() + " characters");
 
                 Path rawResponsePath = Paths.get("raw_response_" + year + ".json");
                 Files.write(rawResponsePath, responseBody.getBytes(StandardCharsets.UTF_8));
-                System.out.println("Сырой ответ сохранен в: " + rawResponsePath.toAbsolutePath());
+                System.out.println("Raw response saved at: " + rawResponsePath.toAbsolutePath());
 
                 JsonNode root = mapper.readTree(responseBody);
                 Set<LocalDate> holidays = new HashSet<>();
                 Set<LocalDate> shortDays = new HashSet<>();
 
                 if (root.has("year") && root.has("months")) {
-                    System.out.println("Обнаружен новый формат данных (2025+)");
+                    System.out.println("New data format (2025+) detected");
                     processNewFormat(root, year, holidays, shortDays);
                 }
                 else if (root.isArray()) {
-                    System.out.println("Формат данных: массив месяцев (старый формат)");
+                    System.out.println("Data format: months array (old format)");
                     for (JsonNode monthNode : root) {
                         processMonthNode(monthNode, year, holidays, shortDays);
                     }
                 } else if (root.isObject() && root.has("months")) {
-                    System.out.println("Формат данных: объект с месяцами (старый формат)");
+                    System.out.println("Data format: object with months (old format)");
                     JsonNode months = root.path("months");
                     if (!months.isMissingNode()) {
                         JsonNode monthArray = months.path("month");
@@ -169,25 +221,25 @@ public class ProductionCalendarService {
                         }
                     }
                 } else {
-                    throw new IOException("Неподдерживаемый формат данных от сервера");
+                    throw new IOException("Unsupported data format from server");
                 }
 
-                System.out.println("Найдено праздников: " + holidays.size());
-                System.out.println("Найдено сокращенных дней: " + shortDays.size());
+                System.out.println("Found holidays: " + holidays.size());
+                System.out.println("Found short days: " + shortDays.size());
 
                 if (holidays.isEmpty() && shortDays.isEmpty()) {
-                    throw new IOException("Сервер вернул пустой календарь");
+                    throw new IOException("Server returned empty calendar");
                 }
 
                 HOLIDAYS_CACHE.put(year, holidays);
                 SHORT_DAYS_CACHE.put(year, shortDays);
                 saveToLocalFile(year, holidays, shortDays);
             } else {
-                throw new IOException("Сервер вернул код ошибки: " + response.statusCode());
+                throw new IOException("Server returned error code: " + response.statusCode());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new IOException("Ошибка при загрузке данных: " + e.getMessage());
+            throw new IOException("Error downloading data: " + e.getMessage());
         }
     }
 

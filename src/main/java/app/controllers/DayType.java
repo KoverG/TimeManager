@@ -1,7 +1,9 @@
 package app.controllers;
 
 public enum DayType {
-    WORKDAY("Рабочий день"), WEEKEND("Выходной");
+    WORKDAY("Рабочий день"),
+    WEEKEND("Выходной"),
+    SHORT("Сокращённый день"); // Добавлен новый тип для сокращённого дня
 
     private final String type;
 
@@ -19,6 +21,8 @@ public enum DayType {
                 return WORKDAY;
             case "Выходной":
                 return WEEKEND;
+            case "Сокращённый день":  // Обрабатываем строку для сокращённого дня
+                return SHORT;
             default:
                 return WORKDAY;  // По умолчанию рабочий день
         }

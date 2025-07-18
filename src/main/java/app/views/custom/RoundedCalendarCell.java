@@ -1,6 +1,6 @@
 package app.views.custom;
 
-import app.utils.UIHelper;
+import app.utils.CalendarCellStyleManager;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.scene.control.Label;
@@ -21,51 +21,28 @@ public class RoundedCalendarCell extends StackPane {
         this.setStyle("");
 
         Rectangle bg = new Rectangle(CELL_WIDTH, CELL_HEIGHT);
-        bg.setArcWidth(15);
-        bg.setArcHeight(15);
+        bg.setArcWidth(CalendarCellStyleManager.getArcWidth());
+        bg.setArcHeight(CalendarCellStyleManager.getArcWidth());
 
         boolean isCurrentMonth = date.getMonthValue() == currentMonth;
-        boolean isHoliday = "holiday".equals(dayType);
-        boolean isWeekend = "weekend".equals(dayType);
-        boolean isShortDay = "short".equals(dayType);
+        boolean isHoliday = "HOLIDAY".equals(dayType);
+        boolean isWeekend = "WEEKEND".equals(dayType);
+        boolean isShortDay = "SHORT".equals(dayType);
 
-        // Установка цвета фона с прозрачностью для не текущего месяца
-        String colorHex = UIHelper.getDayTypeColor(dayType);
-        if (isCurrentMonth) {
-            bg.setFill(UIHelper.color(colorHex));
-        } else {
-            bg.setFill(UIHelper.color(colorHex).deriveColor(0, 1, 1, 0.6));
-        }
+        // Установка цвета фона с использованием нового класса
+        String bgColor = CalendarCellStyleManager.getBackgroundColor(dayType, isCurrentMonth);
+        bg.setFill(Color.web(bgColor));
 
-        if (progress > 0) {
-            bg.setStroke(UIHelper.color(UIHelper.getProgressColor(progress)));
-        } else {
-            if (isCurrentMonth) {
-                if (isHoliday) {
-                    bg.setStroke(UIHelper.color("#ffcdd2"));
-                } else if (isWeekend) {
-                    bg.setStroke(UIHelper.color("#d0d0d0"));
-                } else if (isShortDay) {
-                    bg.setStroke(UIHelper.color("#ffecb3"));
-                } else {
-                    bg.setStroke(UIHelper.color("#d0d0d0"));
-                }
-            } else {
-                bg.setStroke(UIHelper.color("#d0d0d0"));
-            }
-        }
+        // Установка цвета обводки
+        bg.setStroke(CalendarCellStyleManager.getBorderColor(progress, dayType, isCurrentMonth));
 
         Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
         dayLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 18));
-
-        // Изменение цвета текста для не текущего месяца
-        dayLabel.setTextFill(isCurrentMonth ?
-                UIHelper.color("#343a40") :
-                UIHelper.color("#a0a0a0")); // Приглушенный серый
+        dayLabel.setTextFill(CalendarCellStyleManager.getTextColor(isCurrentMonth));
 
         if (progress > 0 && isCurrentMonth) {
             Rectangle progressBar = new Rectangle(CELL_WIDTH * progress, 7);
-            progressBar.setFill(UIHelper.color(UIHelper.getProgressColor(progress)));
+            progressBar.setFill(Color.web(CalendarCellStyleManager.getProgressColor(progress)));
 
             double yPosition = CELL_HEIGHT - 7 - 2;
             progressBar.setY(yPosition);
