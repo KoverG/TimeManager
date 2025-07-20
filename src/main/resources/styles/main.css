@@ -674,3 +674,17 @@
     -fx-min-width: 60px; /* Устанавливаем минимальную ширину */
     -fx-max-width: 70px; /* Максимальная ширина */
 }
+.test123{
+    -fx-text-fill: #dd0b3d;
+    -fx-text-fill: #00dd60;
+    -fx-text-fill: #ec4a05;
+}
+
+/* Добавьте новый стиль */
+.hours-remaining-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+    -fx-font-size: 14px;
+    -fx-padding: 0 0 0 30px;
+    -fx-min-width: 150px;
+}

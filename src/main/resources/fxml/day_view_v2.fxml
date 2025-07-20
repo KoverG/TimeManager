@@ -21,9 +21,10 @@
     <!-- Панель управления типом дня -->
     <HBox alignment="CENTER" spacing="10" styleClass="action-banner">
         <Label text="Тип дня:" styleClass="action-banner-text"/>
-        <ComboBox fx:id="dayTypeCombo" style="-fx-pref-width: 150; -fx-background-radius: 12; -fx-border-radius: 12;" prefWidth="150"/>
+        <ComboBox fx:id="dayTypeCombo" style="-fx-pref-width: 170; -fx-background-radius: 12; -fx-border-radius: 12;" prefWidth="150"/>
         <Label text="Рабочих часов:" styleClass="action-banner-text"/>
         <TextField fx:id="workHoursField" style="-fx-pref-width: 50; -fx-background-radius: 12; -fx-border-radius: 12;" prefWidth="50"/>
+        <Label fx:id="hoursRemainingLabel" styleClass="hours-remaining-label"/>
     </HBox>
 
     <!-- Кнопки действий -->

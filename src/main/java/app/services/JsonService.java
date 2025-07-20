@@ -15,10 +15,10 @@ import java.util.Map;
 
 public class JsonService {
     private static final String DATA_FILE = "data/time_manager_data.json";
-    private static final ObjectMapper MAPPER = new ObjectMapper()
+    public static final ObjectMapper MAPPER = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-    private static final TypeReference<Map<String, DayData>> TYPE_REF =
+    public static final TypeReference<Map<String, DayData>> TYPE_REF =
             new TypeReference<Map<String, DayData>>() {};
 
     /**
@@ -66,6 +66,50 @@ public class JsonService {
         }
     }
 
+    /**
+     * Загружает данные из файла календаря (calendar_текущий год.json).
+     */
+    public static synchronized Map<String, DayData> loadCalendarData(String year) throws IOException {
+        // Формируем имя файла calendar_текущий год.json
+        String calendarFileName = "data/calendar_" + year + ".json";
+        Path calendarPath = Paths.get(calendarFileName);
+
+        // Проверка существования файла
+        if (!Files.exists(calendarPath)) {
+            System.out.println("Файл календаря не существует, создается новый: " + calendarPath.toAbsolutePath());
+            return new HashMap<>();
+        }
+
+        // Проверка, если файл пустой
+        if (Files.size(calendarPath) == 0) {
+            System.out.println("Файл календаря пустой, создается новый: " + calendarPath.toAbsolutePath());
+            return new HashMap<>();
+        }
+
+        // Логируем путь к файлу перед загрузкой
+        System.out.println("Attempting to load data from calendar file: " + calendarPath.toAbsolutePath());
+
+        // Попытка десериализации данных из JSON
+        try {
+            Map<String, DayData> data = MAPPER.readValue(calendarPath.toFile(), TYPE_REF);
+
+            // Логируем результат десериализации
+            if (data == null || data.isEmpty()) {
+                System.out.println("The deserialized calendar data is empty.");
+            } else {
+                System.out.println("Deserialized calendar data: " + data);
+            }
+
+            // Убираем null значения
+            data.entrySet().removeIf(entry -> entry.getValue() == null);
+            System.out.println("Final data after removing null values from calendar: " + data);
+
+            return data;
+        } catch (IOException e) {
+            System.out.println("Ошибка при чтении/десериализации календарного файла: " + calendarPath.toAbsolutePath());
+            throw new IOException("Ошибка чтения или десериализации календарного JSON файла: " + e.getMessage());
+        }
+    }
 
     /**
      * Сохраняет данные в JSON-файл атомарно: в tmp-файл с последующей заменой.

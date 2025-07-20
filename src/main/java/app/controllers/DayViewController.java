@@ -1,4 +1,6 @@
 package app.controllers;
+
+
 //тест ветки
 import app.models.DayData;
 import app.models.TimeEntry;
@@ -20,6 +22,9 @@ import java.util.List;
 import java.util.ArrayList;
 import app.controllers.DayType;
 
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,7 +32,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+
+
 public class DayViewController {
+    private static final Logger logger = Logger.getLogger(DayViewController.class.getName());  // Создаем логгер
+
+    @FXML
+    private Label hoursRemainingLabel;
     @FXML
     private Label dateLabel;
     @FXML
@@ -51,6 +66,9 @@ public class DayViewController {
     private int defaultWorkHours;
     private Map<String, TimeEntry> timeEntries;
     private final BooleanProperty isDirty = new SimpleBooleanProperty(false);
+    private boolean isClearButtonPressed = false;  // Флаг для отслеживания нажатия кнопки "Очистить"
+    private int originalDefaultWorkHours;
+
 
     public void setMainContainer(VBox mainContainer) {
         this.mainContainer = mainContainer;
@@ -62,38 +80,160 @@ public class DayViewController {
         saveButton.disableProperty().bind(isDirty.not());
         dayTypeCombo.valueProperty().addListener((o, ov, nv) -> markDirty());
         workHoursField.textProperty().addListener((o, ov, nv) -> markDirty());
+        workHoursField.textProperty().addListener((obs, oldValue, newValue) -> updateHoursRemaining());
+        dayTypeCombo.valueProperty().addListener((obs, oldValue, newValue) -> updateHoursRemaining());
     }
 
     private void markDirty() {
         isDirty.set(true);
     }
 
+    private void updateViewForEmptyDay(DayData resetDayData, int workHours, DayType type) {
+        // 1) Обновляем модель
+        this.dayData = resetDayData;
+        // 2) Обновляем контр. UI
+        dayTypeCombo.getSelectionModel().select(type.getType());
+        workHoursField.setText(String.valueOf(workHours));
+        // 3) Пересоздаем слоты по новому dayData
+        this.timeEntries = createSortedTimeEntries();
+        timeSlotsContainer.getChildren().clear();
+        timeEntries.forEach((t, e) -> timeSlotsContainer.getChildren().add(createTimeSlotRow(t, e)));
+        // 4) Разблокируем кнопку «Сохранить»
+        markDirty();
+    }
+
+    // Инициализация dataRef
+    private final AtomicReference<Map<String, DayData>> dataRef = new AtomicReference<>(new HashMap<>());
+
+    public void previousDay() {
+        logger.info("Attempting to go to the previous day. Current date: " + currentDate);
+
+        LocalDate previousDate = currentDate.minusDays(1);
+        logger.info("Getting day type for previous day: " + previousDate);
+
+        DayData previousDayData = getDayDataForDate(previousDate);
+        DayType previousDayType = getDayTypeForDate(previousDate);
+
+        // Получаем стандартные рабочие часы для нового типа дня
+        int defaultWorkHoursForNewDay = previousDayData.calculateWorkHoursByDayType(previousDayType, 9);
+
+        // Устанавливаем данные для предыдущего дня с правильным типом и рабочими часами
+        setDayData(previousDate, previousDayData, defaultWorkHoursForNewDay, previousDayType);
+    }
+
+    public void nextDay() {
+        logger.info("Attempting to go to the next day. Current date: " + currentDate);
+
+        LocalDate nextDate = currentDate.plusDays(1);
+        logger.info("Getting day type for next day: " + nextDate);
+
+        DayData nextDayData = getDayDataForDate(nextDate);
+        DayType nextDayType = getDayTypeForDate(nextDate);
+
+        // Получаем стандартные рабочие часы для нового типа дня
+        int defaultWorkHoursForNewDay = nextDayData.calculateWorkHoursByDayType(nextDayType, 9);
+
+        // Устанавливаем данные для следующего дня с правильным типом и рабочими часами
+        setDayData(nextDate, nextDayData, defaultWorkHoursForNewDay, nextDayType);
+    }
+
+
+
     public void setDayData(LocalDate date, DayData data, int workHours, DayType defaultDayType) {
+        logger.info("setDayData called for date: " + date);
+
         this.currentDate = date;
-        this.dayData = (data != null) ? data : new DayData();  // Если данных нет, создаем новый объект
+        this.dayData = (data != null) ? data : new DayData();
         this.defaultWorkHours = workHours;
+        this.originalDefaultWorkHours = workHours;
+
+        logger.info("Loaded DayData for date: " + date + ", dayType: " + this.dayData.getDayType());
+        logger.info("Set work hours: " + workHours);
+        logger.info("Set original work hours: " + workHours);
 
         loadDayDataFromJson();  // Загружаем данные из JSON
 
         // Если данные по дате пусты, задаем тип дня по умолчанию, полученный из календаря
         if (this.dayData == null || this.dayData.getDayType() == null) {
             this.dayData.setDayType(defaultDayType);  // Используем тип дня из календаря
+            logger.info("Day type is null, setting default: " + defaultDayType);
         }
+
+        logger.info("Day type before setting work hours: " + this.dayData.getDayType());
+
+        // Проверяем, если рабочие часы уже установлены в данных, используем их
+        logger.info("Work day hours before checking: " + this.dayData.getWorkDayHours());
+        if (this.dayData.getWorkDayHours() < 0) {
+            // Если в данных нет рабочих часов, вычисляем их в зависимости от типа дня
+            logger.info("Calling calculateWorkHoursByDayType for dayType: " + this.dayData.getDayType() + " and defaultWorkHours: " + defaultWorkHours);
+            int workHoursForDay = this.dayData.calculateWorkHoursByDayType(this.dayData.getDayType(), defaultWorkHours);
+            this.dayData.setWorkDayHours(workHoursForDay);  // Сохраняем вычисленные рабочие часы в объект
+            workHoursField.setText(String.valueOf(workHoursForDay));  // Устанавливаем вычисленные рабочие часы в UI
+            logger.info("Calculated work hours for day: " + workHoursForDay);
+        } else {
+            // Используем уже загруженные рабочие часы из данных
+            workHoursField.setText(String.valueOf(this.dayData.getWorkDayHours()));
+            logger.info("Work hours set from existing data: " + this.dayData.getWorkDayHours());
+        }
+
+        // Сохраняем изменения рабочего времени обратно в DayData
+        dayData.setWorkDayHours(Integer.parseInt(workHoursField.getText()));  // Сохраняем рабочие часы
+        logger.info("Work hours set to: " + workHoursField.getText());
 
         timeEntries = createSortedTimeEntries(); // Создание стандартных временных слотов
         updateUIWithData(); // Обновление UI после загрузки данных
+
+        logger.info("Day data successfully set for date: " + date);
+        logger.info("Work hours field value after UI update: " + workHoursField.getText());
+
+        dayTypeCombo.valueProperty().addListener((obs, oldType, newType) -> {
+            logger.info("DayType changed from " + oldType + " to " + newType);
+
+            DayType selectedType = getDayTypeFromString(newType);
+            logger.info("Selected DayType: " + selectedType);
+
+
+            logger.info("Проверка на то что originalDefaultWorkHours == 0: " + originalDefaultWorkHours);
+                        // Если originalDefaultWorkHours == 0, установим стандартное значение (например, 9)
+            if (originalDefaultWorkHours >= 0) {
+                originalDefaultWorkHours = 9;
+            }
+            logger.info("Проверка что originalDefaultWorkHours поменялся на 9: " + originalDefaultWorkHours);
+
+            // Пересчитываем рабочие часы для нового типа дня
+            int recalculatedWorkHours = dayData.calculateWorkHoursByDayType(selectedType, originalDefaultWorkHours);
+            logger.info("Recalculated work hours: " + recalculatedWorkHours);
+
+            workHoursField.setText(String.valueOf(recalculatedWorkHours));  // Обновляем поле с рабочими часами
+            logger.info("Work hours field updated with recalculated value: " + recalculatedWorkHours);
+
+            // Обновляем тип дня и рабочие часы в dayData
+            dayData.setDayType(selectedType);
+            dayData.setWorkDayHours(recalculatedWorkHours); // Сохраняем новые рабочие часы
+
+            markDirty();  // Устанавливаем флаг изменения
+        });
     }
 
+
+
+
     private void loadDayDataFromJson() {
+        logger.info("Attempting to load data from JSON.");
         try {
-            this.allData = JsonService.getData();  // Загружаем все данные из JSON
-            if (allData.isEmpty()) {  // Проверяем, не пустой ли объект allData
-                allData = new HashMap<>();  // Если данные пустые, инициализируем пустой HashMap
+            // Загружаем все данные из JSON (в первую очередь смотрим в time_manager_data.json)
+            this.allData = JsonService.getData();
+
+            // Если данных нет в time_manager_data.json, пробуем загрузить из calendar_текущий год.json
+            if (allData.isEmpty()) {
+                logger.warning("allData is empty. No data available in time_manager_data.json.");
+                String currentYear = String.valueOf(currentDate.getYear());
+                this.allData = JsonService.loadCalendarData(currentYear);  // Загружаем данные из calendar_текущий год.json
             }
 
             // Логируем полученные данные
             for (Map.Entry<String, DayData> entry : allData.entrySet()) {
-                System.out.println("Loaded DayData: " + entry.getKey() + " -> " + entry.getValue().getDayType());
+                logger.info("Loaded DayData: " + entry.getKey() + " -> " + entry.getValue().getDayType());
             }
 
         } catch (IOException e) {
@@ -101,6 +241,55 @@ public class DayViewController {
             this.allData = new HashMap<>();
         }
     }
+
+
+    private Map<String, DayData> loadCalendarData(String year) {
+        // Формируем имя файла calendar_текущий год.json
+        String calendarFileName = "data/calendar_" + year + ".json";
+        Path calendarPath = Paths.get(calendarFileName);
+
+        // Проверка существования файла
+        if (!Files.exists(calendarPath)) {
+            logger.warning("File " + calendarPath.toAbsolutePath() + " not found. Returning empty data.");
+            return new HashMap<>();  // Если файл не существует, возвращаем пустую карту
+        }
+
+        // Проверка, если файл пустой
+        try {
+            if (Files.size(calendarPath) == 0) {
+                logger.warning("Calendar file is empty, creating new: " + calendarPath.toAbsolutePath());
+                return new HashMap<>();  // Если файл пустой, возвращаем пустую карту
+            }
+        } catch (IOException e) {
+            logger.severe("Error checking the size of the calendar file: " + calendarPath.toAbsolutePath());
+            return new HashMap<>();  // Возвращаем пустую карту, если произошла ошибка
+        }
+
+        // Логируем путь к файлу перед загрузкой
+        logger.info("Attempting to load data from calendar file: " + calendarPath.toAbsolutePath());
+
+        // Попытка десериализации данных из файла
+        try {
+            Map<String, DayData> data = JsonService.MAPPER.readValue(calendarPath.toFile(), JsonService.TYPE_REF);
+
+            // Логируем результат десериализации
+            if (data == null || data.isEmpty()) {
+                logger.warning("The deserialized data from the calendar is empty.");
+                return new HashMap<>();  // Если десериализация пустая, возвращаем пустую карту
+            }
+
+            // Убираем null значения
+            data.entrySet().removeIf(entry -> entry.getValue() == null);
+            logger.info("Final data after removing null values from the calendar: " + data);
+
+            return data;
+        } catch (IOException e) {
+            logger.severe("Error reading or deserializing the calendar file: " + calendarPath.toAbsolutePath());
+            return new HashMap<>();  // Возвращаем пустую карту, если произошла ошибка
+        }
+    }
+
+
 
     private TreeMap<String, TimeEntry> createSortedTimeEntries() {
         TreeMap<String, TimeEntry> sortedEntries = new TreeMap<>();
@@ -136,6 +325,10 @@ public class DayViewController {
     }
 
     private void updateUIWithData() {
+        logger.info("Updating UI with data...");
+        logger.info("Current work hours field value before UI update: " + workHoursField.getText());  // Логируем значение перед обновлением UI
+
+        // Обновляем метку с текущей датой
         dateLabel.setText(DateHelper.formatDisplayDate(currentDate));
 
         // Получаем тип дня
@@ -145,20 +338,29 @@ public class DayViewController {
         // Обновляем комбобокс с типами дней, используя DayType
         dayTypeCombo.setItems(FXCollections.observableArrayList(
                 DayType.WORKDAY.getType(),  // Рабочий день
-                DayType.WEEKEND.getType()   // Выходной день
+                DayType.WEEKEND.getType(),  // Выходной день
+                DayType.SHORT.getType()  // Сокращенный день
         ));
 
-        // Устанавливаем правильное значение комбобокса в зависимости от типа дня
+// Устанавливаем правильное значение комбобокса в зависимости от типа дня
         if (DayType.WORKDAY.equals(dayTypeEnum)) {
             dayTypeCombo.getSelectionModel().select(DayType.WORKDAY.getType());  // Рабочий день
         } else if (DayType.WEEKEND.equals(dayTypeEnum)) {
             dayTypeCombo.getSelectionModel().select(DayType.WEEKEND.getType());  // Выходной день
+        } else if (DayType.SHORT.equals(dayTypeEnum)) {
+            dayTypeCombo.getSelectionModel().select(DayType.SHORT.getType());  // Сокращённый день
         } else {
             // Если тип дня не совпадает, ставим выходной по умолчанию
             dayTypeCombo.getSelectionModel().select(DayType.WEEKEND.getType());  // Выходной день
         }
 
-        workHoursField.setText(String.valueOf(dayData.getWorkDayHours() > 0 ? dayData.getWorkDayHours() : defaultWorkHours));
+        // Логируем значение рабочих часов из dayData перед установкой
+        logger.info("Work day hours from DayData before setting: " + dayData.getWorkDayHours());
+
+        int workHoursToDisplay = dayData.getWorkDayHours() > 0 ? dayData.getWorkDayHours() : defaultWorkHours;
+        workHoursField.setText(String.valueOf(workHoursToDisplay));
+
+        logger.info("Work hours field value after setting: " + workHoursField.getText());
 
         timeSlotsContainer.getChildren().clear();
         timeSlotsContainer.setStyle("-fx-alignment: CENTER;");
@@ -167,6 +369,7 @@ public class DayViewController {
         timeEntries.forEach((timeKey, entry) -> timeSlotsContainer.getChildren().add(createTimeSlotRow(timeKey, entry)));
 
         isDirty.set(false);
+        updateHoursRemaining();
     }
 
 
@@ -247,50 +450,64 @@ public class DayViewController {
         hoursCombo.valueProperty().addListener((o, ov, nv) -> {
             entry.setHours(nv != null ? nv.toString() : "0");
             markDirty();
+            updateHoursRemaining();
         });
 
         minutesCombo.valueProperty().addListener((o, ov, nv) -> {
             entry.setMinutes(nv != null ? nv.toString() : "0");
             markDirty();
+            updateHoursRemaining();
         });
+
 
         return row;
     }
 
     private DayType getDayTypeForDate(LocalDate date) {
+        // Сначала проверяем, является ли день сокращенным
+        if (ProductionCalendarService.isShortDay(date)) {
+            return DayType.SHORT;  // Сокращенный рабочий день (даже если он в holidays)
+        }
+        // Затем проверяем, является ли день праздником/выходным
         if (ProductionCalendarService.isHoliday(date)) {
             return DayType.WEEKEND;  // Праздник — выходной день
         }
-        if (ProductionCalendarService.isShortDay(date)) {
-            return DayType.WORKDAY;  // Сокращённый день — рабочий
+        // Если не сокращенный и не праздник, проверяем субботу/воскресенье
+        if (date.getDayOfWeek() == java.time.DayOfWeek.SATURDAY ||
+                date.getDayOfWeek() == java.time.DayOfWeek.SUNDAY) {
+            return DayType.WEEKEND;  // Выходной
         }
-        if (date.getDayOfWeek() == java.time.DayOfWeek.SATURDAY || date.getDayOfWeek() == java.time.DayOfWeek.SUNDAY) {
-            return DayType.WEEKEND;  // Суббота и воскресенье — выходной
-        }
-        return DayType.WORKDAY;  // По умолчанию рабочий день
+        // В остальных случаях — рабочий день
+        return DayType.WORKDAY;
     }
 
-    @FXML
-    private void previousDay() {
-        DayType dayType = getDayTypeForDate(currentDate.minusDays(1)); //Получаем тип дня для предыдущего дня
-        setDayData(
-                currentDate.minusDays(1),
-                allData.get(DateHelper.formatDate(currentDate.minusDays(1))),
-                defaultWorkHours,
-                dayType  // Передаем тип дня
-        );
+    private DayData getDayDataForDate(LocalDate date) {
+        logger.info("Searching for DayData with dateKey: " + date);
+        // Преобразуем дату в строку для поиска в allData
+        String dateKey = DateHelper.formatDate(date);
+
+        // Логируем ключ для поиска
+        logger.info("Searching for DayData with dateKey: " + dateKey);
+
+        // Проверяем, есть ли данные для этой даты в allData
+        DayData data = allData.get(dateKey);
+
+        if (data == null) {
+            // Логируем, если данных для данной даты нет
+            logger.warning("No DayData found for date: " + date + ", creating new DayData.");
+
+            // Проверяем тип дня из календаря (если он не найден, устанавливаем тип по умолчанию)
+            DayType dayType = getDayTypeForDate(date);
+
+            // Создаем новый объект DayData и задаем правильный тип дня
+            data = new DayData();
+            data.setDayType(dayType);
+        }
+
+        return data;
     }
 
-    @FXML
-    private void nextDay() {
-        DayType dayType = getDayTypeForDate(currentDate.minusDays(1));  // Получаем тип дня для следующего дня
-        setDayData(
-                currentDate.plusDays(1),
-                allData.get(DateHelper.formatDate(currentDate.plusDays(1))),
-                defaultWorkHours,
-                dayType  // Передаем тип дня
-        );
-    }
+
 
     @FXML
     private void saveDay() {
@@ -302,7 +519,7 @@ public class DayViewController {
         try {
             // Проверяем и парсим количество рабочих часов
             int wh = Integer.parseInt(workHoursField.getText());
-            if (wh < 1 || wh > 24) throw new NumberFormatException();
+            if (wh < 0 || wh > 24) throw new NumberFormatException();
 
             // Устанавливаем данные
             dayData.setWorkDayHours(wh);
@@ -343,8 +560,18 @@ public class DayViewController {
                         System.out.println("DayData before save: " + entry.getKey() + " -> " + entry.getValue().getDayType());
                     }
 
-                    // Сохраняем данные
-                    JsonService.saveData(allData);
+                    if (isClearButtonPressed) {
+                        // Очищаем данные в файле
+                        allData.clear();
+                        JsonService.saveData(allData);  // Сохраняем пустую карту в файл
+                        isClearButtonPressed = false;  // Сбрасываем флаг
+                        logger.info("time_manager_data.json очищен.");
+                    } else {
+                        // Если кнопка "Очистить" не была нажата, просто сохраняем данные
+                        JsonService.saveData(allData);
+                    }
+
+
                     handleSaveSuccess(); // Обрабатываем успешное сохранение
                 } catch (IOException e) {
                     saveProgress.setVisible(false);
@@ -396,15 +623,64 @@ public class DayViewController {
 
     @FXML
     private void clearDay() {
-        workHoursField.setText(String.valueOf(defaultWorkHours));
-        dayTypeCombo.getSelectionModel().select(0);  // Выбираем первый элемент в ComboBox
-        timeEntries.clear();
+        logger.info("Нажата кнопка 'Очистить' для даты: " + currentDate);
 
-        // Передаем тип дня по умолчанию (например, DayType.WORKDAY)
-        setDayData(currentDate, new DayData(), defaultWorkHours, DayType.WORKDAY);
+        // 1. Создаем абсолютно новый DayData
+        DayData reset = new DayData();
 
-        markDirty();
+        // 2. Вычисляем тип дня и часы чисто по календарю
+        DayType t = getDayTypeForDate(currentDate);
+        int hrs = reset.calculateWorkHoursByDayType(t, originalDefaultWorkHours);
+        logger.info("Часы для UI после очистки: " + hrs);
+
+        // 3. Обновляем только UI (не трогая defaultWorkHours и слушатели)
+        updateViewForEmptyDay(reset, hrs, t);
+        logger.info("Интерфейс для пустого дня обновлен");
+
+        // 4. Ставим флаг, чтобы saveDay() почистил JSON
+        isClearButtonPressed = true;
+        logger.info("isClearButtonPressed = true");
     }
+
+
+
+    // Новый метод для форматирования времени
+    private String formatTime(int totalMinutes) {
+        int hours = totalMinutes / 60;
+        int minutes = totalMinutes % 60;
+        return String.format("%02d:%02d", hours, minutes);
+    }
+
+    // Добавьте новый метод для обновления оставшихся часов
+    private void updateHoursRemaining() {
+        try {
+            int totalWorkMinutes = Integer.parseInt(workHoursField.getText()) * 60;
+            int enteredMinutes = calculateEnteredMinutes();
+            int remaining = Math.max(0, totalWorkMinutes - enteredMinutes);
+
+            hoursRemainingLabel.setText("Осталось времени: " + formatTime(remaining));
+        } catch (NumberFormatException e) {
+            hoursRemainingLabel.setText("Осталось времени: --:--");
+        }
+    }
+
+    // Метод для расчета введенных часов
+    private int calculateEnteredMinutes() {
+        int total = 0;
+        if (timeEntries != null) {
+            for (TimeEntry entry : timeEntries.values()) {
+                try {
+                    int hours = Integer.parseInt(entry.getHours());
+                    int minutes = Integer.parseInt(entry.getMinutes());
+                    total += hours * 60 + minutes;
+                } catch (NumberFormatException e) {
+                    // Игнорируем невалидные значения
+                }
+            }
+        }
+        return total;
+    }
+
 
     @FXML
     private void backToCalendar() {

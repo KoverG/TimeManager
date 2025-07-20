@@ -65,12 +65,6 @@ public class CalendarCellStyleManager {
         }
     }
 
-    // Метод для получения цвета прогресса
-    public static String getProgressColor(double progress) {
-        if (progress >= 0.99) return "#27ae60";  // Зеленый
-        if (progress >= 0.7) return "#f39c12";   // Желтый
-        return "#e74c3c";  // Красный
-    }
 
     // Метод для получения формы ячейки (круглая)
     public static double getArcWidth() {
@@ -84,5 +78,25 @@ public class CalendarCellStyleManager {
         bg.setFill(Color.web(bgColor));  // Устанавливаем цвет фона
         return bg;
     }
+
+    public static Rectangle createProgressBar(double width, double height, double cornerRadius) {
+        Rectangle progressBar = new Rectangle(width, height);
+        progressBar.setArcWidth(cornerRadius);  // Устанавливаем закругленные углы
+        progressBar.setArcHeight(cornerRadius);
+        return progressBar;
+    }
+
+    // Метод для получения цвета прогресс-бара
+    public static String getProgressColor(double progress) {
+        // Пример: возврат цвета на основе прогресса
+        if (progress < 0.8) {
+            return "#dd0b3d"; // Красный
+        } else if (progress < 0.99) {
+            return "#ec4a05"; // Желтый
+        } else {
+            return "#00dd60"; // Зеленый
+        }
+    }
+
 
 }
