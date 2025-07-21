@@ -6,6 +6,7 @@ import app.models.DayData;
 import app.models.TimeEntry;
 import app.services.JsonService;
 import app.services.ProductionCalendarService;
+import app.utils.CalendarCellStyleManager;
 import app.utils.DateHelper;
 import app.utils.UIHelper;
 import javafx.animation.PauseTransition;
@@ -14,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javafx.beans.property.BooleanProperty;
@@ -44,10 +46,11 @@ import java.util.List;
 import java.time.LocalTime;
 
 
+
 public class DayViewController {
     private static final Logger logger = Logger.getLogger(DayViewController.class.getName());  // Создаем логгер
 
-
+    @FXML private StackPane hoursRemainingContainer;
     @FXML
     private Label hoursRemainingLabel;
     @FXML
@@ -637,13 +640,13 @@ public class DayViewController {
                     }
 
                     if (isClearButtonPressed) {
-                        // Очищаем данные в файле
-                        allData.clear();
-                        JsonService.saveData(allData);  // Сохраняем пустую карту в файл
-                        isClearButtonPressed = false;  // Сбрасываем флаг
-                        logger.info("time_manager_data.json очищен.");
+                        // Удаляем только объект за текущий день
+                        String key = DateHelper.formatDate(currentDate);
+                        allData.remove(key);
+                        JsonService.saveData(allData);
+                        isClearButtonPressed = false;
+                        logger.info("Данные за день " + key + " удалены из time_manager_data.json.");
                     } else {
-                        // Если кнопка "Очистить" не была нажата, просто сохраняем данные
                         JsonService.saveData(allData);
                     }
 
@@ -731,14 +734,62 @@ public class DayViewController {
     private void updateHoursRemaining() {
         try {
             int totalWorkMinutes = Integer.parseInt(workHoursField.getText()) * 60;
-            int enteredMinutes = calculateEnteredMinutes();
-            int remaining = Math.max(0, totalWorkMinutes - enteredMinutes);
+            int enteredMinutes   = calculateEnteredMinutes();
+            int remaining        = Math.max(0, totalWorkMinutes - enteredMinutes);
 
+            // Обновляем текст
             hoursRemainingLabel.setText("Осталось времени: " + formatTime(remaining));
+
+            // Вычисляем прогресс [0…1]
+            double progress = (double)(totalWorkMinutes - remaining) / totalWorkMinutes;
+            progress = Math.max(0, Math.min(progress, 1));
+
+            if (progress <= 0) {
+                hoursRemainingLabel.setText("Осталось времени: " + formatTime(remaining));
+                hoursRemainingContainer.setStyle(
+                        "-fx-border-width: 2px; " +
+                                "-fx-border-radius: 12px; " +
+                                "-fx-border-color: #ced4da;"
+                );
+                return;
+            }
+
+            // Вычисляем ширину перехода
+            double transitionWidth = Math.min(0.1, 1 - progress);
+            int pct            = (int)Math.round(progress * 100);           // точка перехода
+            int transitionPct  = (int)Math.round(transitionWidth * 100);    // ширина перехода
+            int endPct         = Math.min(100, pct + transitionPct);        // конец перехода
+
+            // Цвета
+            String usedColor    = CalendarCellStyleManager.getProgressColor(progress);
+            String defaultColor = "#ced4da";
+
+            // Градиент:
+            //  - от 0% до pct% — сплошной usedColor
+            //  - от pct% до endPct% — плавный переход usedColor→defaultColor
+            //  - от endPct% до 100% — сплошной defaultColor
+            hoursRemainingContainer.setStyle(String.format(
+                    "-fx-border-width: 2px; " +
+                            "-fx-border-radius: 12px; " +
+                            "-fx-border-color: linear-gradient(" +
+                            "from 0%% 0%% to 100%% 0%%, " +
+                            "%s 0%%, " +   // usedColor at 0%
+                            "%s %d%%, " +  // usedColor at pct%
+                            "%s %d%%, " +  // defaultColor at endPct%
+                            "%s 100%%" +   // defaultColor at 100%
+                            ");",
+                    usedColor,
+                    usedColor,    pct,
+                    defaultColor, endPct,
+                    defaultColor
+            ));
+
         } catch (NumberFormatException e) {
             hoursRemainingLabel.setText("Осталось времени: --:--");
+            hoursRemainingContainer.setStyle("");
         }
     }
+
 
     // Метод для расчета введенных часов
     private int calculateEnteredMinutes() {

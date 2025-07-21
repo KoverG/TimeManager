@@ -24,7 +24,10 @@
         <ComboBox fx:id="dayTypeCombo" style="-fx-pref-width: 170; -fx-background-radius: 12; -fx-border-radius: 12;" prefWidth="150"/>
         <Label text="Рабочих часов:" styleClass="action-banner-text"/>
         <TextField fx:id="workHoursField" style="-fx-pref-width: 50; -fx-background-radius: 12; -fx-border-radius: 12;" prefWidth="50"/>
-        <Label fx:id="hoursRemainingLabel" styleClass="hours-remaining-label"/>
+        <StackPane fx:id="hoursRemainingContainer" alignment="CENTER"
+                   styleClass="hours-remaining-frame">
+            <Label fx:id="hoursRemainingLabel" />
+        </StackPane>
     </HBox>
 
     <!-- Кнопки действий -->

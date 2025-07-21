@@ -768,3 +768,12 @@
     -fx-padding: 0 0 0 30px;
     -fx-min-width: 150px;
 }
+
+/* Контейнер для «Осталось времени» */
+.hours-remaining-frame {
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 5px 15px; /* отступы внутри рамки */
+}
