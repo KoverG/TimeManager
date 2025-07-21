@@ -564,7 +564,7 @@
 
 .time-slot-row .time-label {
     -fx-font-size: 14px;
-    -fx-font-weight: normal; /* MODIFIED: Убран жирный шрифт */
+    -fx-font-weight: bold;
     -fx-text-fill: #495057;
     -fx-padding: 0 5px;
     -fx-alignment: CENTER_LEFT;
@@ -630,18 +630,96 @@
     -fx-padding: 0 5px;
 }
 
-
-
-
-
 .main-banner-day-string {
     -fx-alignment: CENTER;
     -fx-padding: 5;
     -fx-background-color: white;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
-    -fx-border-color: #ced4da;
-    -fx-border-width: 1;
+    -fx-border-color: #ffffff;
+}
+
+/* Hover‑эффект для обычных строк */
+.main-banner-day-string:hover {
+    /* лёгкий градиент и смена рамки */
+    -fx-background-color:
+            linear-gradient(
+                    from 0% 0% to 100% 0%,
+                    rgb(255, 245, 214) 0%,
+                    rgb(255, 255, 255) 50%
+            );
+    -fx-border-color:
+            linear-gradient(
+                    from 0% 0% to 100% 0%,
+                    rgb(255, 245, 214) 0%,
+                    rgb(255, 255, 255) 100%
+            );
+
+    /* тень для объёма */
+    -fx-effect: dropshadow(gaussian, rgba(50, 50, 50, 0.15), 4, 0, 0, 2);
+
+    /* лёгкое «увеличение» при наведении */
+    -fx-scale-x: 1.005;
+    -fx-scale-y: 1.005;
+
+    /* курсор‑рука */
+    -fx-cursor: hand;
+}
+
+
+/* NEW: подсветка строк в выбранном диапазоне */
+.range-selected {
+    /* Скругление для фона и рамки */
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color:
+            linear-gradient(
+                    from 0% 0% to 100% 0%,
+
+                        /* 0…50% — персиковый→белый */
+                    rgb(255, 193, 166) 0%,
+                    rgb(255, 193, 166) 0%,   /* я повторяю первый стоп, но можно и без — для ясности */
+                    rgb(255, 255, 255) 50%,
+
+                        /* 50…80% — чисто белый */
+                    rgb(255, 255, 255) 50%,
+                    rgb(255, 255, 255) 80%,
+
+                        /* 80…100% — чисто персиковый */
+                    rgb(255, 193, 166) 100%
+            );
+
+
+    /* Градиент фона слева→справа */
+    -fx-background-color:
+            linear-gradient(
+                    from 0% 0% to 100% 0%,
+                    rgb(255, 193, 166) 0%,
+                    rgb(255, 255, 255) 50%
+            );
+
+}
+
+.range-selected:hover {
+    /* Сделаем фон чуть светлее и «подумаем» градиент */
+    -fx-background-color:
+            linear-gradient(
+                    from 0% 0% to 100% 0%,
+                    rgb(255, 210, 186) 0%,
+                    rgb(255, 255, 255) 50%
+            );
+
+    /* Усилим тень на ховере */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+
+
+    /* Меняем рамку: цвет и ширину */
+    -fx-border-color:
+            linear-gradient(
+                    from 0% 0% to 100% 0%,
+                    rgb(255, 210, 186) 0%,
+                    rgb(255, 255, 255) 50%
+            );
 }
 
 .time-slot-label {
@@ -649,7 +727,9 @@
     -fx-text-fill: #495057;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 5px 0 0;
-    -fx-font-weight: normal;
+    /* Новые свойства: */
+    -fx-translate-x: -10px;        /* сдвиг влево на 5px */
+    -fx-translate-y: -5px;        /* сдвиг вверх на 5px */
 }
 
 /* NEW BLOCK: Стили для статуса сохранения */

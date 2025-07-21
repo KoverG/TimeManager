@@ -18,6 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
 import app.controllers.DayType;
@@ -36,10 +38,15 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javafx.util.Pair;
+import java.util.ArrayList;
+import java.util.List;
+import java.time.LocalTime;
 
 
 public class DayViewController {
     private static final Logger logger = Logger.getLogger(DayViewController.class.getName());  // Создаем логгер
+
 
     @FXML
     private Label hoursRemainingLabel;
@@ -68,7 +75,8 @@ public class DayViewController {
     private final BooleanProperty isDirty = new SimpleBooleanProperty(false);
     private boolean isClearButtonPressed = false;  // Флаг для отслеживания нажатия кнопки "Очистить"
     private int originalDefaultWorkHours;
-
+    // Храним все строки временных слотов
+    private final List<TimeSlotRow> slotRows = new ArrayList<>();
 
     public void setMainContainer(VBox mainContainer) {
         this.mainContainer = mainContainer;
@@ -96,10 +104,12 @@ public class DayViewController {
         workHoursField.setText(String.valueOf(workHours));
         // 3) Пересоздаем слоты по новому dayData
         this.timeEntries = createSortedTimeEntries();
+        slotRows.clear();
         timeSlotsContainer.getChildren().clear();
         timeEntries.forEach((t, e) -> timeSlotsContainer.getChildren().add(createTimeSlotRow(t, e)));
         // 4) Разблокируем кнопку «Сохранить»
         markDirty();
+        recalcHighlights();
     }
 
     // Инициализация dataRef
@@ -362,6 +372,7 @@ public class DayViewController {
 
         logger.info("Work hours field value after setting: " + workHoursField.getText());
 
+        slotRows.clear();
         timeSlotsContainer.getChildren().clear();
         timeSlotsContainer.setStyle("-fx-alignment: CENTER;");
 
@@ -370,6 +381,7 @@ public class DayViewController {
 
         isDirty.set(false);
         updateHoursRemaining();
+        recalcHighlights();
     }
 
 
@@ -377,13 +389,18 @@ public class DayViewController {
 
 
     private HBox createTimeSlotRow(String time, TimeEntry entry) {
+        // NEW: распарсили базовое время слота
+        LocalTime slotTime = LocalTime.parse(
+                time, DateTimeFormatter.ofPattern("HH:mm")
+        );
+
         HBox row = new HBox(5);
         row.getStyleClass().add("main-banner-day-string");
         row.setMaxWidth(950);
 
         Label timeLabel = new Label(time);
         timeLabel.getStyleClass().add("time-slot-label");
-        timeLabel.setPrefWidth(40);
+        timeLabel.setPrefWidth(45);
 
         TextField taskField = new TextField(entry.getTask());
         taskField.setPromptText("Задача");
@@ -413,6 +430,12 @@ public class DayViewController {
         completedCheck.getStyleClass().add("jira-checkbox");
 
         row.getChildren().addAll(timeLabel, taskField, hoursCombo, minutesCombo, commentField, completedCheck);
+
+        slotRows.add(new TimeSlotRow(
+                slotTime, row, hoursCombo, minutesCombo
+        ));
+
+
 
         // Устанавливаем значения для комбобоксов
         try {
@@ -447,21 +470,74 @@ public class DayViewController {
             markDirty();
         });
 
+        // Обработчики изменений с подсветкой диапазона
         hoursCombo.valueProperty().addListener((o, ov, nv) -> {
             entry.setHours(nv != null ? nv.toString() : "0");
             markDirty();
             updateHoursRemaining();
+            // NEW: обновляем подсветку
+            recalcHighlights();
         });
 
         minutesCombo.valueProperty().addListener((o, ov, nv) -> {
             entry.setMinutes(nv != null ? nv.toString() : "0");
             markDirty();
             updateHoursRemaining();
+            // NEW: обновляем подсветку
+            recalcHighlights();
         });
 
 
         return row;
     }
+
+    private void highlightRange(LocalTime startTime, int addedH, int addedM) {
+        // 1) Сняли со всех
+        slotRows.forEach(r -> r.row.getStyleClass().remove("range-selected"));
+
+        // 2) Если ноль — выходим
+        if (addedH == 0 && addedM == 0) return;
+
+        // 3) Вычисляем конец диапазона
+        LocalTime endTime = startTime.plusHours(addedH).plusMinutes(addedM);
+
+        // 4) Проходим по всем строкам и добавляем класс тем, кто в диапазоне
+        for (TimeSlotRow r : slotRows) {
+            if (!r.time.isBefore(startTime) && r.time.isBefore(endTime)) {
+                r.row.getStyleClass().add("range-selected");
+            }
+        }
+    }
+
+    private void recalcHighlights() {
+        // 1) Снимаем на всякий случай старый highlight
+        slotRows.forEach(r ->
+                r.row.getStyleClass().remove("range-selected")
+        );
+
+        // 2) Собираем все диапазоны
+        List<Pair<LocalTime, LocalTime>> ranges = new ArrayList<>();
+        for (TimeSlotRow tsr : slotRows) {
+            Integer h = tsr.hoursCombo.getValue();
+            Integer m = tsr.minutesCombo.getValue();
+            if (h != null && m != null && (h != 0 || m != 0)) {
+                LocalTime start = tsr.time;
+                LocalTime end = start.plusHours(h).plusMinutes(m);
+                ranges.add(new Pair<>(start, end));
+            }
+        }
+
+        // 3) Для каждой строки — проверить, попадает ли её время хотя бы в один диапазон
+        for (TimeSlotRow tsr : slotRows) {
+            for (Pair<LocalTime, LocalTime> rg : ranges) {
+                if (!tsr.time.isBefore(rg.getKey()) && tsr.time.isBefore(rg.getValue())) {
+                    tsr.row.getStyleClass().add("range-selected");
+                    break; // больше не нужно проверять остальные диапазоны
+                }
+            }
+        }
+    }
+
 
     private DayType getDayTypeForDate(LocalDate date) {
         // Сначала проверяем, является ли день сокращенным
@@ -681,10 +757,20 @@ public class DayViewController {
         return total;
     }
 
-
     @FXML
     private void backToCalendar() {
         CalendarController ctrl = (CalendarController) mainContainer.getUserData();
         if (ctrl != null) ctrl.showCalendar();
     }
+
+    private static class TimeSlotRow {
+        LocalTime time;
+        HBox row;
+        ComboBox<Integer> hoursCombo;
+        ComboBox<Integer> minutesCombo;
+        TimeSlotRow(LocalTime t, HBox r, ComboBox<Integer> h, ComboBox<Integer> m) {
+            time = t; row = r; hoursCombo = h; minutesCombo = m;
+        }
+    }
+
 }
