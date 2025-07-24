@@ -1,53 +1,60 @@
 package app.controllers;
 
-
-//тест ветки
 import app.models.DayData;
 import app.models.TimeEntry;
 import app.services.JsonService;
 import app.services.ProductionCalendarService;
 import app.utils.CalendarCellStyleManager;
 import app.utils.DateHelper;
+import app.utils.TimeZoneManager;
 import app.utils.UIHelper;
+import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
-import app.controllers.DayType;
-
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import javafx.util.Pair;
-import java.util.ArrayList;
-import java.util.List;
-import java.time.LocalTime;
-
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import app.controllers.DayType;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 
 
 public class DayViewController {
+
+    public DayViewController() {
+        System.out.println(">>> КОНСТРУКТОР DayViewController вызван");
+    }
+
     private static final Logger logger = Logger.getLogger(DayViewController.class.getName());  // Создаем логгер
 
     @FXML private StackPane hoursRemainingContainer;
@@ -69,6 +76,20 @@ public class DayViewController {
     private Label saveSuccessIcon; // Галочка
     @FXML
     private ProgressIndicator saveProgress;
+    @FXML private Label currentTimeLabel;
+    @FXML private ComboBox<TimeZoneManager.ZoneItem> timeZoneCombo;
+
+    @FXML private HBox tzBox;
+    @FXML private Region progressSpacer;
+
+    @FXML private StackPane globalProgressContainer;
+    @FXML private Region    globalProgressBg;
+    @FXML private Region    globalProgressFill;
+    @FXML private HBox      slotsWrapper;
+    @FXML private ScrollPane scrollPane;
+    @FXML private StackPane  slotsRoot;
+    @FXML private StackPane saveStatusContainer;
+
 
     private LocalDate currentDate;
     private DayData dayData;
@@ -80,19 +101,253 @@ public class DayViewController {
     private int originalDefaultWorkHours;
     // Храним все строки временных слотов
     private final List<TimeSlotRow> slotRows = new ArrayList<>();
+    private final TimeZoneManager tzManager = new TimeZoneManager();
+    private final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
+    private Timeline clock;
+
+    private final DoubleProperty dayProgress = new SimpleDoubleProperty(0);
+    // Кешируем границы дня и шаг
+    private LocalTime dayStart;
+    private LocalTime dayEnd;
+    private int       slotStepMinutes;
 
     public void setMainContainer(VBox mainContainer) {
         this.mainContainer = mainContainer;
     }
 
+    private void bindGlobalProgressBar() {
+        globalProgressBg.prefHeightProperty().bind(timeSlotsContainer.heightProperty());
+        // Новый подход (spacer сверху, fill снизу)
+        progressSpacer.prefHeightProperty().bind(globalProgressBg.heightProperty().multiply(1.0 - dayProgress.get()));
+        globalProgressFill.prefHeightProperty().bind(globalProgressBg.heightProperty().multiply(dayProgress.get()));
+
+        // Для обновления при изменении dayProgress:
+        dayProgress.addListener((obs, oldV, newV) -> {
+            progressSpacer.prefHeightProperty().bind(globalProgressBg.heightProperty().multiply(1.0 - newV.doubleValue()));
+            globalProgressFill.prefHeightProperty().bind(globalProgressBg.heightProperty().multiply(newV.doubleValue()));
+        });
+    }
+
     @FXML
     public void initialize() {
+        System.err.println("=== initialize ===");
+        System.err.println("globalProgressContainer = " + globalProgressContainer);
+        System.err.println("globalProgressBg = " + globalProgressBg);
+        System.err.println("globalProgressFill = " + globalProgressFill);
+        System.err.println("timeSlotsContainer = " + timeSlotsContainer);
+        System.out.println(">>> DayViewController.initialize() called");
+        saveStatusContainer.setVisible(false);
         saveSuccessIcon.setVisible(false); // Галочка скрыта изначально
         saveButton.disableProperty().bind(isDirty.not());
         dayTypeCombo.valueProperty().addListener((o, ov, nv) -> markDirty());
         workHoursField.textProperty().addListener((o, ov, nv) -> markDirty());
         workHoursField.textProperty().addListener((obs, oldValue, newValue) -> updateHoursRemaining());
         dayTypeCombo.valueProperty().addListener((obs, oldValue, newValue) -> updateHoursRemaining());
+
+
+        timeZoneCombo.setItems(tzManager.getZoneItems());
+
+        // Автодобавление системной зоны, если её нет
+        ZoneId sys = ZoneId.systemDefault();
+        TimeZoneManager.ZoneItem def = tzManager.ensureZone(sys);
+        timeZoneCombo.getSelectionModel().select(def);
+
+        // Компактное отображение: только код
+        timeZoneCombo.setVisibleRowCount(5);
+        timeZoneCombo.setCellFactory(cb -> new ListCell<>() {
+            @Override protected void updateItem(TimeZoneManager.ZoneItem item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.code());
+            }
+        });
+
+
+        timeZoneCombo.setButtonCell(new ListCell<>() {
+            @Override protected void updateItem(TimeZoneManager.ZoneItem item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.code());
+            }
+        });
+
+        // Высота комбо = высоте часов
+        timeZoneCombo.prefHeightProperty().bind(currentTimeLabel.heightProperty());
+        timeZoneCombo.minHeightProperty().bind(currentTimeLabel.heightProperty());
+        timeZoneCombo.maxHeightProperty().bind(currentTimeLabel.heightProperty());
+
+        // Обновление часов при смене TZ
+        timeZoneCombo.valueProperty().addListener((obs, o, n) -> updateClock());
+
+        // Таймер
+        clock = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            logger.info("Timer tick → updateClock()");             // ⭐ новый лог
+            updateClock();
+        }));
+        clock.setCycleCount(Timeline.INDEFINITE);
+        clock.play();
+
+        updateClock();
+        attachHideArrow();
+
+        // Привязка глобального прогресс-бара
+        bindGlobalProgressBar();
+        StackPane.setAlignment(globalProgressFill, Pos.TOP_CENTER);
+
+        timeSlotsContainer.getChildren().addListener((ListChangeListener<Node>) c -> {
+            recalcDayBounds();
+            updateGlobalProgress();
+        });
+
+        // ЛОГ: слушаем изменения dayProgress
+        dayProgress.addListener((obs, oldV, newV) ->
+                logger.info(String.format(
+                        "dayProgress listener → old=%.4f, new=%.4f",
+                        oldV.doubleValue(), newV.doubleValue()
+                ))
+        );
+
+        // ЛОГ: слушаем получение высоты контейнера фона
+        globalProgressBg.heightProperty().addListener((obs, oldH, newH) ->
+                logger.info(String.format(
+                        "globalProgressBg.heightProperty → old=%.1fpx, new=%.1fpx",
+                        oldH.doubleValue(), newH.doubleValue()
+                ))
+        );
+
+        // Центрирование и фиксация ширины слотов
+        scrollPane.viewportBoundsProperty().addListener((obs, o, vb) ->
+                slotsRoot.setPrefWidth(vb.getWidth()));
+
+        Platform.runLater(() -> {
+            double w = slotsWrapper.prefWidth(-1);
+            slotsWrapper.setPrefWidth(w);
+            slotsWrapper.setMinWidth(w);
+            slotsWrapper.setMaxWidth(w);
+        });
+    }
+
+    private void recalcDayBounds() {
+        if (slotRows.isEmpty()) {
+            dayStart = LocalTime.MIN;
+            dayEnd   = LocalTime.MAX;
+            slotStepMinutes = 10; // запасной вариант
+            return;
+        }
+
+        dayStart = slotRows.get(0).getTime(); // или твой геттер времени слота
+        LocalTime second = slotRows.size() > 1 ? slotRows.get(1).getTime() : dayStart.plusMinutes(10);
+        slotStepMinutes = (int) Math.max(1, java.time.Duration.between(dayStart, second).toMinutes());
+        dayEnd = slotRows.get(slotRows.size() - 1).getTime().plusMinutes(slotStepMinutes);
+    }
+
+    private void updateGlobalProgress() {
+        logger.info("updateGlobalProgress → entering");            // ⭐ ещё более ранний лог
+        ZoneId zone = getCurrentZoneId();
+        LocalTime now = LocalTime.now(zone);
+
+        logger.info(String.format(
+                "  [pre-calc] now=%s, dayStart=%s, dayEnd=%s, rows=%d",
+                now, dayStart, dayEnd, slotRows.size()
+        ));
+
+        if (slotRows.isEmpty()) {
+            logger.info("  slotRows empty → dayProgress=0");
+            dayProgress.set(0);
+            return;
+        }
+
+        long totalMs = java.time.Duration.between(dayStart, dayEnd).toMillis();
+        long passedMs = now.isBefore(dayStart)
+                ? 0
+                : now.isBefore(dayEnd)
+                ? java.time.Duration.between(dayStart, now).toMillis()
+                : totalMs;
+
+        logger.info(String.format("  Durations → totalMs=%d, passedMs=%d", totalMs, passedMs));
+
+        double frac = totalMs > 0 ? (double)passedMs / totalMs : 0;
+        logger.info(String.format("  Computed frac=%.4f", frac));
+
+        dayProgress.set(frac);
+
+        double bgH = globalProgressBg.getHeight();
+        double fillH = globalProgressFill.getHeight();
+        double calcH = bgH * frac;
+        logger.info(String.format(
+                "  [post-bind] bgH=%.1fpx, fillH=%.1fpx, expected=%.1fpx",
+                bgH, fillH, calcH
+        ));
+    }
+
+
+
+
+    private ZoneId getCurrentZoneId() {
+        TimeZoneManager.ZoneItem item = timeZoneCombo.getValue();
+        return item != null ? item.zoneId() : ZoneId.systemDefault();
+    }
+
+
+    private void attachHideArrow() {
+        // 1-й заход — после построения сцены
+        Platform.runLater(() -> tryHideArrow(timeZoneCombo, "Platform.runLater"));
+
+        // На случай пересоздания скина
+        timeZoneCombo.skinProperty().addListener((obs, oldSkin, newSkin) -> {
+            logger.info("[TZ] skin changed -> tryHideArrow");
+            Platform.runLater(() -> tryHideArrow(timeZoneCombo, "skinListener"));
+        });
+    }
+
+    private void tryHideArrow(ComboBox<?> combo, String from) {
+        Region arrowBtn = (Region) combo.lookup(".arrow-button");
+        if (arrowBtn == null) {
+            logger.warning("[TZ] (" + from + ") .arrow-button NOT found");
+            return;
+        }
+
+        logger.info("[TZ] (" + from + ") hide arrow. before: vis=" + arrowBtn.isVisible()
+                + " managed=" + arrowBtn.isManaged() + " w=" + arrowBtn.getWidth());
+
+        arrowBtn.setVisible(false);
+        arrowBtn.setManaged(false);
+        arrowBtn.setMouseTransparent(true);
+        arrowBtn.setPrefSize(0, 0);
+        arrowBtn.setMinSize(0, 0);
+        arrowBtn.setMaxSize(0, 0);
+
+        Region arrowShape = (Region) arrowBtn.lookup(".arrow");
+        if (arrowShape != null) {
+            arrowShape.setVisible(false);
+            arrowShape.setManaged(false);
+        }
+
+        logger.info("[TZ] (" + from + ") after: vis=" + arrowBtn.isVisible()
+                + " managed=" + arrowBtn.isManaged());
+    }
+
+
+    private void dumpChildren(Parent root, int level) {
+        String indent = "  ".repeat(level);
+        logger.info(indent + root.getClass().getSimpleName() +
+                " id=" + root.getId() +
+                " styleClass=" + root.getStyleClass());
+        for (Node n : root.getChildrenUnmodifiable()) {
+            if (n instanceof Parent) {
+                dumpChildren((Parent) n, level + 1);
+            } else {
+                logger.info(indent + "  " + n.getClass().getSimpleName() +
+                        " id=" + n.getId() +
+                        " styleClass=" + n.getStyleClass());
+            }
+        }
+    }
+
+
+    private void updateClock() {
+        logger.info("updateClock → entering");                     // ⭐ новый лог
+        ZoneId zone = getCurrentZoneId();
+        currentTimeLabel.setText(LocalTime.now(zone).format(TIME_FMT));
+        updateGlobalProgress();
     }
 
     private void markDirty() {
@@ -113,6 +368,8 @@ public class DayViewController {
         // 4) Разблокируем кнопку «Сохранить»
         markDirty();
         recalcHighlights();
+        recalcDayBounds();
+        updateGlobalProgress();
     }
 
     // Инициализация dataRef
@@ -331,7 +588,7 @@ public class DayViewController {
 
     private List<Integer> generateTimeValues() {
         List<Integer> timeValues = new ArrayList<>();
-        for (int i = 0; i < 60; i += 10) {  // Шаг всегда 5 минут
+        for (int i = 0; i < 60; i += 10) {  // Шаг 10 минут
             timeValues.add(i);
         }
         return timeValues;
@@ -377,14 +634,18 @@ public class DayViewController {
 
         slotRows.clear();
         timeSlotsContainer.getChildren().clear();
-        timeSlotsContainer.setStyle("-fx-alignment: CENTER;");
 
-        // Добавляем все временные слоты, даже если для них нет данных
         timeEntries.forEach((timeKey, entry) -> timeSlotsContainer.getChildren().add(createTimeSlotRow(timeKey, entry)));
 
         isDirty.set(false);
         updateHoursRemaining();
         recalcHighlights();
+
+        // Вот тут уже можно пересчитывать прогресс!
+        recalcDayBounds();
+        updateGlobalProgress();
+        System.err.println("[updateUIWithData] slotRows.size=" + slotRows.size() +
+                " dayStart=" + dayStart + " dayEnd=" + dayEnd);
     }
 
 
@@ -400,10 +661,14 @@ public class DayViewController {
         HBox row = new HBox(5);
         row.getStyleClass().add("main-banner-day-string");
         row.setMaxWidth(950);
+        row.setPadding(new Insets(0, 10, 0, 10));
+        row.setAlignment(Pos.CENTER_LEFT);
 
         Label timeLabel = new Label(time);
         timeLabel.getStyleClass().add("time-slot-label");
         timeLabel.setPrefWidth(45);
+        timeLabel.setMinWidth(45);
+        timeLabel.setAlignment(Pos.CENTER_RIGHT);
 
         TextField taskField = new TextField(entry.getTask());
         taskField.setPromptText("Задача");
@@ -822,6 +1087,7 @@ public class DayViewController {
         TimeSlotRow(LocalTime t, HBox r, ComboBox<Integer> h, ComboBox<Integer> m) {
             time = t; row = r; hoursCombo = h; minutesCombo = m;
         }
+        LocalTime getTime() { return time; }
     }
 
 }

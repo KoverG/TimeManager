@@ -501,14 +501,14 @@
 
 /* Галочка */
 .jira-checkbox .mark {
-    -fx-shape: "M0,4 L2,6 L7,0 L8,1 L2,7 L0,5 Z"; /* Форма галочки */
+    -fx-shape: "M0,4 L2,6 L7,0 L8,1 L2,7 L0,5 Z";
     -fx-scale-shape: true;
-    -fx-translate-x: 0; /* Увеличиваем галочку */
+    -fx-translate-x: 0;
     -fx-translate-y: 0;
-    -fx-fill: white;  /* Устанавливаем белый цвет для галочки */
+    -fx-fill: white;
     -fx-opacity: 0;
     -fx-transition: opacity 0.2s;
-    -fx-stroke-width: 2px; /* Увеличиваем толщину галочки */
+    -fx-stroke-width: 2px;
 }
 
 .jira-checkbox:selected .mark {
@@ -518,16 +518,6 @@
     -fx-opacity: 1;
 }
 
-
-/* NEW BLOCK: Стили для строк временных слотов */
-.time-slot-row {
-    -fx-padding: 5px;
-    -fx-background-color: white;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1px;
-}
 
 .time-slot-row .label {
     -fx-font-size: 14px;
@@ -603,7 +593,7 @@
 
 /* NEW BLOCK: Стиль для комбобокса типа дня */
 .day-type-combo {
-    -fx-pref-width: 150px; /* MODIFIED: Увеличенная ширина */
+    -fx-pref-width: 150px;
     -fx-pref-height: 28px;
     -fx-min-height: 28px;
     -fx-font-size: 14px;
@@ -625,111 +615,88 @@
     -fx-background-radius: 0 12px 12px 0;
 }
 
-/* NEW BLOCK: Стиль для круглых чекбоксов */
-.time-slot-row . {
-    -fx-padding: 0 5px;
+/* ---------- ФИКС ДЁРГАНИЯ: строки ---------- */
+.main-banner-day-string,
+.main-banner-day-string:hover,
+.range-selected,
+.range-selected:hover {
+    -fx-padding: 5;
+    -fx-border-width: 1;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
 }
 
+/* БАЗОВАЯ строка */
 .main-banner-day-string {
     -fx-alignment: CENTER;
-    -fx-padding: 5;
     -fx-background-color: white;
     -fx-background-radius: 12;
     -fx-border-radius: 12;
     -fx-border-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(50,50,50,0.12), 4, 0, 0, 2);
 }
 
-/* Hover‑эффект для обычных строк */
+/* Hover строки — цвета/тень без изменения размеров */
 .main-banner-day-string:hover {
-    /* лёгкий градиент и смена рамки */
-    -fx-background-color:
-            linear-gradient(
-                    from 0% 0% to 100% 0%,
-                    rgb(255, 245, 214) 0%,
-                    rgb(255, 255, 255) 50%
-            );
-    -fx-border-color:
-            linear-gradient(
-                    from 0% 0% to 100% 0%,
-                    rgb(255, 245, 214) 0%,
-                    rgb(255, 255, 255) 100%
-            );
-
-    /* тень для объёма */
-    -fx-effect: dropshadow(gaussian, rgba(50, 50, 50, 0.15), 4, 0, 0, 2);
-
-    /* лёгкое «увеличение» при наведении */
-    -fx-scale-x: 1.005;
-    -fx-scale-y: 1.005;
-
-    /* курсор‑рука */
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            rgb(255,245,214) 0%,
+            white 50%
+    );
+    -fx-border-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            rgb(255,245,214) 0%,
+            white 100%
+    );
+    -fx-effect: dropshadow(gaussian, rgba(50,50,50,0.18), 4, 0, 0, 2);
     -fx-cursor: hand;
 }
 
-
-/* NEW: подсветка строк в выбранном диапазоне */
+/* Диапазон */
 .range-selected {
-    /* Скругление для фона и рамки */
     -fx-background-radius: 12;
     -fx-border-radius: 12;
-    -fx-border-color:
-            linear-gradient(
-                    from 0% 0% to 100% 0%,
-
-                        /* 0…50% — персиковый→белый */
-                    rgb(255, 193, 166) 0%,
-                    rgb(255, 193, 166) 0%,   /* я повторяю первый стоп, но можно и без — для ясности */
-                    rgb(255, 255, 255) 50%,
-
-                        /* 50…80% — чисто белый */
-                    rgb(255, 255, 255) 50%,
-                    rgb(255, 255, 255) 80%,
-
-                        /* 80…100% — чисто персиковый */
-                    rgb(255, 193, 166) 100%
-            );
-
-
-    /* Градиент фона слева→справа */
-    -fx-background-color:
-            linear-gradient(
-                    from 0% 0% to 100% 0%,
-                    rgb(255, 193, 166) 0%,
-                    rgb(255, 255, 255) 50%
-            );
-
+    -fx-border-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            rgb(255,193,166) 0%,
+            white 50%,
+            white 80%,
+            rgb(255,193,166) 100%
+    );
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            rgb(255,193,166) 0%,
+            white 50%
+    );
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 4, 0, 0, 2);
 }
 
 .range-selected:hover {
-    /* Сделаем фон чуть светлее и «подумаем» градиент */
-    -fx-background-color:
-            linear-gradient(
-                    from 0% 0% to 100% 0%,
-                    rgb(255, 210, 186) 0%,
-                    rgb(255, 255, 255) 50%
-            );
-
-    /* Усилим тень на ховере */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
-
-
-    /* Меняем рамку: цвет и ширину */
-    -fx-border-color:
-            linear-gradient(
-                    from 0% 0% to 100% 0%,
-                    rgb(255, 210, 186) 0%,
-                    rgb(255, 255, 255) 50%
-            );
+    -fx-background-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            rgb(255,210,186) 0%,
+            white 50%
+    );
+    -fx-border-color: linear-gradient(
+            from 0% 0% to 100% 0%,
+            rgb(255,210,186) 0%,
+            white 50%
+    );
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 4, 0, 0, 2);
 }
+
+/* ------------------------------------------- */
 
 .time-slot-label {
     -fx-font-size: 14px;
     -fx-text-fill: #495057;
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 5px 0 0;
-    /* Новые свойства: */
-    -fx-translate-x: -10px;        /* сдвиг влево на 5px */
-    -fx-translate-y: -5px;        /* сдвиг вверх на 5px */
+    -fx-translate-x: 0 !important;
+    -fx-translate-y: 0 !important;
+    -fx-padding: 0 5 0 0;   /* если нужен небольшой внутренний отступ */
 }
 
 /* NEW BLOCK: Стили для статуса сохранения */
@@ -739,7 +706,6 @@
     -fx-alignment: center;
 }
 
-
 /* Если хочется, чтобы контейнер центрировал содержимое */
 .stack-pane#saveStatusContainer {
     -fx-alignment: center;
@@ -748,16 +714,11 @@
 .adjusted-time-slot-label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2f4f4f; /* Цвет текста, можно изменить */
+    -fx-text-fill: #2f4f4f;
     -fx-alignment: center;
     -fx-padding: 5px;
-    -fx-min-width: 60px; /* Устанавливаем минимальную ширину */
-    -fx-max-width: 70px; /* Максимальная ширина */
-}
-.test123{
-    -fx-text-fill: #dd0b3d;
-    -fx-text-fill: #00dd60;
-    -fx-text-fill: #ec4a05;
+    -fx-min-width: 60px;
+    -fx-max-width: 70px;
 }
 
 /* Добавьте новый стиль */
@@ -775,5 +736,69 @@
     -fx-border-width: 1px;
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
-    -fx-padding: 5px 15px; /* отступы внутри рамки */
+    -fx-padding: 5px 15px;
+}
+
+.current-time-label {
+    -fx-font-size: 35px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 0 0;
+}
+
+/* Плоский комбобокс без свечения и тени */
+.tz-combo.combo-box-base,
+.tz-combo.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-background-radius: 24;
+    -fx-border-radius: 24;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-font-size: 18px;
+    /* без -fx-effect */
+}
+
+.tz-combo > .text-box {
+    -fx-padding: 0;
+    -fx-alignment: CENTER;
+}
+
+/* Стрелка скрыта */
+.tz-combo > .arrow-button,
+.tz-combo > .arrow-button > .arrow {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+    -fx-min-width: 0;
+    -fx-max-width: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+
+/* Список */
+.tz-combo .list-cell {
+    -fx-padding: 2 4;
+    -fx-font-size: 16px;
+    -fx-alignment: CENTER;
+}
+
+.global-progress-container {
+    -fx-background-color: transparent;
+}
+
+.global-progress-bg {
+    -fx-background-color: #f2f4f7;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.global-progress-fill {
+    -fx-background-color: #6d85bf;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+/* Hover — цвет тот же, чтобы ничего не сдвигалось */
+.global-progress-container:hover .global-progress-fill {
+    -fx-background-color: #6d85bf;
 }

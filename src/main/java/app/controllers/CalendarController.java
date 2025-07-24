@@ -29,6 +29,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Collections;
@@ -36,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import app.controllers.DayType;
 
 import javafx.scene.shape.Rectangle;
 
@@ -67,7 +67,7 @@ public class CalendarController {
     private Label successIcon;
 
     private LocalDate currentDate = LocalDate.now();
-    private final AtomicReference<Map<String, DayData>> dataRef = // MODIFIED: Используем AtomicReference
+    private final AtomicReference<Map<String, DayData>> dataRef =
             new AtomicReference<>(new HashMap<>());
 
     private boolean updatingCombo = false;
@@ -75,10 +75,10 @@ public class CalendarController {
     @FXML
     public void initialize() {
         try {
-            dataRef.set(JsonService.loadData()); // Ожидаем, что loadData() загрузит корректные данные
+            dataRef.set(JsonService.loadData());
         } catch (IOException e) {
             UIHelper.showError("Ошибка загрузки данных: " + e.getMessage());
-            dataRef.set(new HashMap<>()); // Если ошибка загрузки, инициализируем пустую карту
+            dataRef.set(new HashMap<>());
         }
 
         monthCombo.getItems().addAll(
@@ -129,35 +129,34 @@ public class CalendarController {
         updateWarningAndButtonVisibility();
     }
 
-
     private void showDayView(LocalDate date, DayData dayData) {
+        URL fxmlUrl = Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("fxml/day_view_v2.fxml");
+        if (fxmlUrl == null) {
+            UIHelper.showError("FXML файл не найден: /fxml/day_view_v2.fxml");
+            return;
+        }
+
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/day_view_v2.fxml"));
             VBox dayView = loader.load();
+
             DayViewController controller = loader.getController();
 
-            // Определяем тип дня из данных
             DayType dayType = dayData.getDayType();
+            int calculatedWorkHours = dayData.getWorkDayHours(9);
 
-            // Передаём вычисленные рабочие часы из DayData
-            int calculatedWorkHours = dayData.getWorkDayHours(9);  // Используем getWorkDayHours с дефолтным значением
-
-            controller.setDayData(
-                    date,
-                    dayData,
-                    calculatedWorkHours,  // передаем вычисленные рабочие часы
-                    dayType
-            );
-
+            controller.setDayData(date, dayData, calculatedWorkHours, dayType);
             controller.setMainContainer(mainContainer);
+
             mainContainer.setUserData(this);
             mainContainer.getChildren().setAll(dayView);
 
-        } catch (IOException e) {
-            UIHelper.showError("Ошибка загрузки экрана дня: " + e.getMessage());
+        } catch (Exception ex) {
+            UIHelper.showError("Ошибка загрузки экрана дня:\n" + ex.getMessage());
         }
     }
-
 
     private void updateWarningAndButtonVisibility() {
         Integer selectedYear = yearCombo.getValue();
@@ -343,130 +342,90 @@ public class CalendarController {
         }
     }
 
-
     private void addCalendarCell(LocalDate date, int currentMonth, int row, int col) {
-        // Получаем данные о днях
         Map<String, DayData> data = dataRef.get();
         if (data == null) {
             data = new HashMap<>();
-            dataRef.set(data);  // Обновляем ссылку в AtomicReference
+            dataRef.set(data);
         }
 
         String dateStr = DateHelper.formatDate(date);
         AtomicReference<DayData> dayDataRef = new AtomicReference<>(data.get(dateStr));
 
-        // Если данных нет, создаем новый объект DayData
         DayData dayData = dayDataRef.get();
         if (dayData == null) {
             dayData = new DayData();
             dayDataRef.set(dayData);
         }
 
-        // Логируем дату и текущие данные
-        System.out.println("Checking day for: " + date + " (" + dateStr + ")");
-
-
         if (data.containsKey(dateStr)) {
             dayData = data.get(dateStr);
-            System.out.println("Found in time_manager_data.json: " + date + ", setting as " + dayData.getDayType());
         } else {
-            // Логируем, если данные не найдены в time_manager_data.json
-            System.out.println("No data found for " + date + " in time_manager_data.json.");
-
-            // Загружаем список праздников и коротких дней из calendar_выбранный год.json
             List<String> holidays = ProductionCalendarService.loadHolidays(String.valueOf(date.getYear()));
             List<String> shortDays = ProductionCalendarService.loadShortDays(String.valueOf(date.getYear()));
 
-            // Если день есть в списке праздников или коротких дней
             if (holidays.contains(dateStr)) {
-                // Если день также в shortDays, считаем его сокращённым
                 if (shortDays.contains(dateStr)) {
-                    dayData.setDayType(DayType.SHORT);  // Сокращённый рабочий день
-                    System.out.println("Setting " + date + " as short day (SHORT) because it's also in shortDays.");
+                    dayData.setDayType(DayType.SHORT);
                 } else {
-                    dayData.setDayType(DayType.WEEKEND);  // Праздник — выходной день
-                    System.out.println("Setting " + date + " as holiday (WEEKEND).");
+                    dayData.setDayType(DayType.WEEKEND);
                 }
             } else if (shortDays.contains(dateStr)) {
-                dayData.setDayType(DayType.SHORT);  // Сокращённый рабочий день
-                System.out.println("Setting " + date + " as short day (SHORT) because it's in shortDays.");
+                dayData.setDayType(DayType.SHORT);
             } else {
-                // Если данные не найдены, проверяем, является ли день выходным (суббота или воскресенье)
                 if (date.getDayOfWeek() == java.time.DayOfWeek.SATURDAY || date.getDayOfWeek() == java.time.DayOfWeek.SUNDAY) {
-                    dayData.setDayType(DayType.WEEKEND);  // Выходной день
-                    System.out.println("Setting " + date + " as weekend (WEEKEND).");
+                    dayData.setDayType(DayType.WEEKEND);
                 } else {
-                    dayData.setDayType(DayType.WORKDAY);  // Рабочий день
-                    System.out.println("Setting " + date + " as workday (WORKDAY).");
+                    dayData.setDayType(DayType.WORKDAY);
                 }
             }
         }
 
-        // Получаем тип дня
+        int workHours = dayData.getWorkDayHours(9);
 
-        int workHours = dayData.getWorkDayHours(9);  // Используем метод getWorkDayHours с дефолтным значением
-
-        // Вычисляем прогресс
         double progress = dayData.getProgress(workHours);
 
-        // Создаем ячейку календаря с типом дня
         RoundedCalendarCell cell = new RoundedCalendarCell(date, currentMonth, progress, dayData.getDayType().toString());
 
-        // Применяем цвета и форму ячейки централизованно
         String bgColor = CalendarCellStyleManager.getBackgroundColor(dayData.getDayType().toString(), date.getMonthValue() == currentMonth);
 
-        // Создаем круглый фон ячейки через Rectangle
         Rectangle bg = CalendarCellStyleManager.createCellBackground(90, 75, bgColor);
 
-        // Используем StackPane для наложения элементов
         StackPane stackPane = new StackPane();
         stackPane.getChildren().add(bg);
 
-        // Добавляем в ячейку прогрессбар, если он есть
         if (progress > 0) {
-            // Используем новый метод для создания прогресс-бара с заданной формой
-            Rectangle progressBar = CalendarCellStyleManager.createProgressBar(90 * progress, 25, 15);  // 3 — радиус закругления
+            Rectangle progressBar = CalendarCellStyleManager.createProgressBar(90 * progress, 25, 15);
             progressBar.setFill(Color.web(CalendarCellStyleManager.getProgressColor(progress)));
-
-            // Позиционируем прогресс-бар в самый низ ячейки
             StackPane.setAlignment(progressBar, Pos.BOTTOM_LEFT);
-
-            // Добавляем прогресс-бар в стек
             stackPane.getChildren().add(progressBar);
-
-            // Добавляем фон и прогресс-бар
-            bg.setStroke(Color.web(CalendarCellStyleManager.getProgressColor(progress))); // Контур в зависимости от прогресса
+            bg.setStroke(Color.web(CalendarCellStyleManager.getProgressColor(progress)));
             cell.getChildren().addAll(bg, progressBar);
         } else {
-            // Если прогресс 0, то добавляем только фон
-            cell.getChildren().add(bg); // Только фон без прогресса
+            cell.getChildren().add(bg);
         }
 
-        // Добавляем метку с числом дня
         Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
         dayLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 18));
         dayLabel.setTextFill(CalendarCellStyleManager.getTextColor(date.getMonthValue() == currentMonth));
 
-        // Позиционируем метку с числом дня в центре
         StackPane.setAlignment(dayLabel, Pos.CENTER);
         stackPane.getChildren().add(dayLabel);
 
         cell.getChildren().add(dayLabel);
 
-        // Обработчик нажатия на ячейку
-        cell.setOnMouseClicked(e -> showDayView(date, dayDataRef.get()));  // Передаем dayData в showDayView
+        cell.setOnMouseClicked(e -> showDayView(date, dayDataRef.get()));
         calendarGrid.add(cell, col, row);
     }
 
-
-
-
-
-    public void showCalendar () {
-        updateCalendar();  // Перерисовываем календарь
-
+    public void showCalendar() {
+        updateCalendar();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/calendar.fxml"));
+            Parent root = FXMLLoader.load(
+                    Thread.currentThread()
+                            .getContextClassLoader()
+                            .getResource("fxml/calendar.fxml")
+            );
             mainContainer.getChildren().clear();
             mainContainer.getChildren().add(root);
         } catch (IOException e) {
