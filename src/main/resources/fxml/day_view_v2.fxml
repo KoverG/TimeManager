@@ -76,30 +76,32 @@
                 fitToWidth="true"
                 hbarPolicy="NEVER"
                 style="-fx-background: transparent; -fx-background-color: transparent; -fx-padding: 5;">
-
-        <StackPane fx:id="slotsRoot" style="-fx-padding: 0 0 5 0;">
-            <!-- Group не меняет размер детей -->
-            <Group StackPane.alignment="TOP_CENTER">
-                <HBox fx:id="slotsWrapper" spacing="8">
-                    <!-- Глобальный прогресс-бар -->
-                    <StackPane fx:id="globalProgressContainer"
-                               prefWidth="8"
-                               styleClass="global-progress-container">
-                        <Region fx:id="globalProgressBg"   styleClass="global-progress-bg"/>
-                        <VBox prefWidth="8" fillWidth="true">
-                            <Region fx:id="progressSpacer" style="-fx-background-color: transparent;"/>
-                            <Region fx:id="globalProgressFill" styleClass="global-progress-fill"/>
-                        </VBox>
-                    </StackPane>
-
-                    <!-- Слоты -->
-                    <VBox fx:id="timeSlotsContainer"
-                          spacing="5"
-                          alignment="TOP_CENTER"
-                          fillWidth="false"/>
-                </HBox>
-            </Group>
+        <StackPane fx:id="slotsRoot"
+                   style="-fx-padding: 0 0 5 0;"
+                   alignment="CENTER">
+            <HBox fx:id="slotsWrapper"
+                  spacing="8"
+                  alignment="CENTER"
+                  StackPane.alignment="CENTER">
+                <!-- Прогресс-бар фикс ширины -->
+                <StackPane fx:id="globalProgressContainer"
+                           minWidth="8" maxWidth="8" prefWidth="8"
+                           styleClass="global-progress-container">
+                    <Region fx:id="globalProgressBg" styleClass="global-progress-bg"/>
+                    <VBox prefWidth="8" fillWidth="true">
+                        <Region fx:id="globalProgressFill" styleClass="global-progress-fill"/>
+                        <Region fx:id="progressSpacer" style="-fx-background-color: transparent;"/>
+                    </VBox>
+                </StackPane>
+                <!-- Слоты времени -->
+                <VBox fx:id="timeSlotsContainer"
+                      spacing="5"
+                      alignment="TOP_CENTER"
+                      fillWidth="true"
+                      minWidth="380"
+                      prefWidth="400"
+                      maxWidth="900"/>
+            </HBox>
         </StackPane>
     </ScrollPane>
-
 </VBox>

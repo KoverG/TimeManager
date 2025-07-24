@@ -144,7 +144,6 @@ public class DayViewController {
         workHoursField.textProperty().addListener((obs, oldValue, newValue) -> updateHoursRemaining());
         dayTypeCombo.valueProperty().addListener((obs, oldValue, newValue) -> updateHoursRemaining());
 
-
         timeZoneCombo.setItems(tzManager.getZoneItems());
 
         // Автодобавление системной зоны, если её нет
@@ -160,7 +159,6 @@ public class DayViewController {
                 setText(empty || item == null ? null : item.code());
             }
         });
-
 
         timeZoneCombo.setButtonCell(new ListCell<>() {
             @Override protected void updateItem(TimeZoneManager.ZoneItem item, boolean empty) {
@@ -179,7 +177,7 @@ public class DayViewController {
 
         // Таймер
         clock = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-            logger.info("Timer tick → updateClock()");             // ⭐ новый лог
+            logger.info("Timer tick → updateClock()");
             updateClock();
         }));
         clock.setCycleCount(Timeline.INDEFINITE);
@@ -197,7 +195,6 @@ public class DayViewController {
             updateGlobalProgress();
         });
 
-        // ЛОГ: слушаем изменения dayProgress
         dayProgress.addListener((obs, oldV, newV) ->
                 logger.info(String.format(
                         "dayProgress listener → old=%.4f, new=%.4f",
@@ -205,7 +202,6 @@ public class DayViewController {
                 ))
         );
 
-        // ЛОГ: слушаем получение высоты контейнера фона
         globalProgressBg.heightProperty().addListener((obs, oldH, newH) ->
                 logger.info(String.format(
                         "globalProgressBg.heightProperty → old=%.1fpx, new=%.1fpx",
@@ -213,17 +209,28 @@ public class DayViewController {
                 ))
         );
 
-        // Центрирование и фиксация ширины слотов
-        scrollPane.viewportBoundsProperty().addListener((obs, o, vb) ->
-                slotsRoot.setPrefWidth(vb.getWidth()));
+        // ------- ВАЖНО! Новый адаптивный биндинг ширины слотов ---------
+        final double MIN_SLOT_WIDTH = 400;
+        final double MAX_SLOT_WIDTH = 1500;
+        final double PROGRESS_BAR_WIDTH = 8;  // совпадает с prefWidth глобального прогресс контейнера!
+        final double SLOTTING_SPACING = 8;    // spacing в FXML
 
-        Platform.runLater(() -> {
-            double w = slotsWrapper.prefWidth(-1);
-            slotsWrapper.setPrefWidth(w);
-            slotsWrapper.setMinWidth(w);
-            slotsWrapper.setMaxWidth(w);
+        scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
+            double slotWidth = Math.max(MIN_SLOT_WIDTH, Math.min(newVal.getWidth() - 32, MAX_SLOT_WIDTH));
+            timeSlotsContainer.setPrefWidth(slotWidth);
+            double totalWidth = PROGRESS_BAR_WIDTH + SLOTTING_SPACING + slotWidth;
+            slotsWrapper.setPrefWidth(totalWidth);
         });
+        Platform.runLater(() -> {
+            double slotWidth = Math.max(MIN_SLOT_WIDTH, Math.min(scrollPane.getViewportBounds().getWidth() - 32, MAX_SLOT_WIDTH));
+            timeSlotsContainer.setPrefWidth(slotWidth);
+            double totalWidth = PROGRESS_BAR_WIDTH + SLOTTING_SPACING + slotWidth;
+            slotsWrapper.setPrefWidth(totalWidth);
+        });
+        // ------- КОНЕЦ блока управления шириной ---------
+
     }
+
 
     private void recalcDayBounds() {
         if (slotRows.isEmpty()) {
